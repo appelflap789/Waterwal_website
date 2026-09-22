@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Waterwal — Flood protection that lives in a drawer</title>
+<meta name="description" content="Waterwal water-absorbing flood bags store flat in a drawer and swell into an 18 kg barrier in minutes. No sand. No shovel. No warehouse.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%230E3A4E'/><path d='M6 19q5-4 10 0t10 0' stroke='%236FA8BC' stroke-width='2.4' fill='none' stroke-linecap='round'/></svg>">
+</head>
+<body>
+
+<!-- Mock-up banner: remove before any real deployment -->
+<div class="mock-note">Design mock-up — placeholder copy, figures and testimonials. Nothing here is a live offer.</div>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap">
+    <nav class="nav">
+      <a class="brand" href="index.html" aria-label="Waterwal home">
+        <svg class="brand-mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="15" fill="#0E3A4E"/>
+          <path d="M6 19q5-4 10 0t10 0" stroke="#6FA8BC" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          <path d="M6 13q5-4 10 0t10 0" stroke="rgba(255,255,255,.45)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-name">Water<em>wal</em></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#space">The space it takes</a></li>
+        <li><a href="#uses">Where it's used</a></li>
+        <li><a href="#specs">Specification</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a class="btn btn--ghost" href="#faq">Talk to us</a>
+        <a class="btn btn--primary" href="buy.html">Buy the product</a>
+        <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span></span></button>
+      </div>
+    </nav>
+  </div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="wrap">
+      <ul>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#space">The space it takes</a></li>
+        <li><a href="#uses">Where it's used</a></li>
+        <li><a href="#specs">Specification</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="buy.html">Buy the product</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================ HERO ============================ -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="hero-badge reveal"><b>New</b> Ready before the forecast is</span>
+        <h1 class="reveal" style="--d:60ms">Flood protection that lives in a <em>drawer</em>.</h1>
+        <p class="lede reveal mt-m" style="--d:140ms">
+          Waterwal bags are 2&nbsp;cm thin and weigh 420&nbsp;grams. Add water and each one becomes an
+          18&nbsp;kilo barrier in about three minutes. No sand. No shovel. No storage unit.
+          Just a quiet answer to the question you'd rather not think about.
+        </p>
+        <div class="btn-row mt-l reveal" style="--d:220ms">
+          <a class="btn btn--primary btn--lg" href="buy.html">Buy the product <span class="arrow">&#8594;</span></a>
+          <a class="btn btn--ghost btn--lg" href="#how">See how it works</a>
+        </div>
+        <p class="hero-note reveal" style="--d:300ms">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6FA8BC" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Ships flat &middot; 10-year shelf life &middot; Nothing to maintain
+        </p>
+      </div>
+
+      <div class="hero-art reveal" style="--d:180ms">
+        <svg viewBox="0 0 640 420" role="img" aria-label="Cross-section of a doorway: floodwater outside is held back by three stacked layers of Waterwal bags, and the floor inside stays dry.">
+          <defs>
+            <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#8FC4D4"/><stop offset="100%" stop-color="#4E8EA6"/>
+            </linearGradient>
+            <linearGradient id="bagGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1F6E8D"/><stop offset="100%" stop-color="#0E3A4E"/>
+            </linearGradient>
+            <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FCFBF8"/><stop offset="100%" stop-color="#F1EDE5"/>
+            </linearGradient>
+            <clipPath id="waterClip"><rect x="0" y="200" width="332" height="130"/></clipPath>
+          </defs>
+
+          <rect width="640" height="420" fill="url(#skyGrad)"/>
+
+          <!-- inside the building -->
+          <rect x="458" y="58" width="182" height="272" fill="#FDFBF7"/>
+          <line x1="430" y1="58" x2="640" y2="58" stroke="#0E3A4E" stroke-opacity=".2" stroke-width="2"/>
+          <g stroke="#0E3A4E" stroke-opacity=".055" stroke-width="1">
+            <line x1="505" y1="58" x2="505" y2="330"/>
+            <line x1="555" y1="58" x2="555" y2="330"/>
+            <line x1="605" y1="58" x2="605" y2="330"/>
+          </g>
+
+          <!-- wall above the doorway -->
+          <rect x="430" y="58" width="28" height="192" fill="#E2D8C9"/>
+          <rect x="430" y="58" width="6"  height="192" fill="#D6CBB9"/>
+          <rect x="430" y="243" width="28" height="7" fill="#C7BAA6"/>
+
+          <!-- ground and floor -->
+          <rect x="0" y="330" width="640" height="90" fill="#E8DFD2"/>
+          <rect x="458" y="330" width="182" height="90" fill="#EFE7DA"/>
+          <line x1="0" y1="330" x2="640" y2="330" stroke="#0E3A4E" stroke-opacity=".16" stroke-width="2"/>
+          <rect x="424" y="323" width="38" height="8" rx="2" fill="#C7BAA6"/>
+
+          <!-- floodwater -->
+          <g clip-path="url(#waterClip)">
+            <rect x="-40" y="272" width="400" height="70" fill="url(#waterGrad)" opacity=".66"/>
+            <path class="wave-a" d="M-60 274 q30 -9 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 V360 H-60 Z" fill="#6FA8BC" opacity=".45"/>
+            <path class="wave-b" d="M-60 281 q30 8 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 V360 H-60 Z" fill="#BCDBE4" opacity=".40"/>
+          </g>
+
+          <!-- the barrier -->
+          <g>
+            <rect x="330" y="302" width="128" height="27" rx="9" fill="url(#bagGrad)"/>
+            <rect x="337" y="276" width="121" height="25" rx="9" fill="url(#bagGrad)"/>
+            <rect x="344" y="250" width="114" height="25" rx="9" fill="url(#bagGrad)"/>
+            <g stroke="rgba(255,255,255,.20)" stroke-width="1.2" stroke-linecap="round">
+              <line x1="348" y1="309" x2="348" y2="322"/><line x1="366" y1="309" x2="366" y2="322"/>
+              <line x1="355" y1="283" x2="355" y2="294"/><line x1="373" y1="283" x2="373" y2="294"/>
+              <line x1="362" y1="257" x2="362" y2="268"/><line x1="380" y1="257" x2="380" y2="268"/>
+            </g>
+          </g>
+
+          <!-- annotations -->
+          <g font-family="Inter, sans-serif" font-size="13">
+            <text x="34" y="307" fill="#FFFFFF" fill-opacity=".92">Floodwater</text>
+
+            <text x="150" y="206" fill="#0E3A4E">Three layers &#183; 33 cm</text>
+            <line x1="300" y1="202" x2="392" y2="202" stroke="#0E3A4E" stroke-opacity=".45" stroke-width="1" stroke-dasharray="3 3"/>
+            <line x1="392" y1="202" x2="392" y2="246" stroke="#0E3A4E" stroke-opacity=".45" stroke-width="1" stroke-dasharray="3 3"/>
+            <circle cx="392" cy="248" r="3" fill="#0E3A4E"/>
+
+            <text x="496" y="374" fill="#8A9299">Floor, dry</text>
+          </g>
+        </svg>
+        <span class="art-caption">One doorway &middot; six bags &middot; under four minutes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ STAT STRIP ============================ -->
+  <section class="stat-strip">
+    <div class="wrap">
+      <div class="stat reveal"><div class="n"><span data-count="420">0</span><small>g</small></div><div class="l">Dry weight of one bag</div></div>
+      <div class="stat reveal" style="--d:80ms"><div class="n"><span data-count="18">0</span><small>kg</small></div><div class="l">Weight once activated</div></div>
+      <div class="stat reveal" style="--d:160ms"><div class="n"><span data-count="3">0</span><small>min</small></div><div class="l">Average activation time</div></div>
+      <div class="stat reveal" style="--d:240ms"><div class="n"><span data-count="10">0</span><small>yr</small></div><div class="l">Shelf life, sealed</div></div>
+    </div>
+  </section>
+
+  <!-- ============================ THE PROBLEM ============================ -->
+  <section class="section" id="why">
+    <div class="wrap">
+      <div class="wrap--narrow" style="padding-inline:0">
+        <span class="eyebrow reveal">The honest version</span>
+        <h2 class="display reveal" style="--d:60ms">Most people find out their plan doesn't work at&nbsp;2&nbsp;a.m.</h2>
+        <p class="lede mt-m reveal" style="--d:120ms">
+          Heavy rain arrives faster than it used to, and the traditional answer — sandbags — asks for
+          everything you don't have in that moment: sand, a shovel, a second pair of hands, and a warning
+          that came early enough to matter. Waterwal was built the other way around. It asks for nothing
+          until the day you need it.
+        </p>
+      </div>
+
+      <div class="contrast">
+        <div class="panel panel--old reveal">
+          <h3>The old way</h3>
+          <ul>
+            <li><svg class="tick" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA3AB" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg> Half a pallet of storage, all year round, for four nights of use</li>
+            <li><svg class="tick" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA3AB" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg> Roughly 420&nbsp;kg to move by hand, in the rain, in the dark</li>
+            <li><svg class="tick" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA3AB" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg> You need sand on site before the water arrives — most people don't</li>
+            <li><svg class="tick" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA3AB" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg> Filling and stacking a single doorway takes two people about 45 minutes</li>
+          </ul>
+        </div>
+        <div class="panel panel--new reveal" style="--d:100ms">
+          <h3>With Waterwal</h3>
+          <ul>
+            <li><svg class="tick" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6FA8BC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> A pack of twenty fits in a shoebox, under the stairs or behind a filing cabinet</li>
+            <li><svg class="tick" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6FA8BC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 8.4&nbsp;kg for that same pack — one person carries it in one hand</li>
+            <li><svg class="tick" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6FA8BC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> The floodwater itself activates them, so late warnings stop being fatal</li>
+            <li><svg class="tick" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6FA8BC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> One doorway, one person, about six minutes start to finish</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ HOW IT WORKS ============================ -->
+  <section class="section section--paper2" id="how">
+    <div class="wrap">
+      <span class="eyebrow reveal">How it works</span>
+      <h2 class="display reveal" style="--d:60ms">Three steps. No training.</h2>
+      <p class="lede mt-m reveal" style="--d:100ms">
+        Inside each bag is a cross-linked polymer core that binds water and holds it as a gel.
+        That's the whole mechanism — and the reason it stays flat until the moment it's needed.
+      </p>
+
+      <div class="steps">
+        <article class="step reveal">
+          <h3>Lay them down</h3>
+          <p>Take the bags out of the pack and lay them flat across the doorway, vent, or loading bay. They arrive folded and ready — there's nothing to assemble.</p>
+          <span class="t">30 seconds</span>
+        </article>
+        <article class="step reveal" style="--d:100ms">
+          <h3>Add water</h3>
+          <p>A hose, a bucket, or the floodwater already at your door. The core binds the water and each bag swells to around 18&nbsp;kg, moulding itself to the ground beneath it.</p>
+          <span class="t">3 minutes</span>
+        </article>
+        <article class="step reveal" style="--d:200ms">
+          <h3>Stack and walk away</h3>
+          <p>Build up in layers, overlapping like brickwork. The weight and the seal do the rest. Afterwards the bags dry out slowly and go out with ordinary waste.</p>
+          <span class="t">2 minutes</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ SPACE COMPARISON ============================ -->
+  <section class="section" id="space">
+    <div class="wrap">
+      <span class="eyebrow reveal">The unique bit</span>
+      <h2 class="display reveal" style="--d:60ms">The protection is the easy part.<br>The storage is why people never buy&nbsp;it.</h2>
+      <p class="lede mt-m reveal" style="--d:100ms">
+        Everybody agrees flood barriers are sensible. Almost nobody has room for them.
+        Here is the same doorway, protected both ways — drawn to scale.
+      </p>
+
+      <div class="compare reveal" style="--d:140ms">
+        <div class="compare-head">
+          <p><b>Protecting one standard front door</b> &mdash; 20 units, three layers high</p>
+          <div class="segmented" role="tablist" aria-label="Compare storage">
+            <button role="tab" id="tab-sand" aria-selected="false" data-mode="sandbags">Traditional sandbags</button>
+            <button role="tab" id="tab-ww" aria-selected="true" data-mode="waterwal">Waterwal</button>
+          </div>
+        </div>
+
+        <div class="compare-body">
+          <div class="compare-visual">
+            <div>
+              <div class="volume" id="volumeVisual" aria-hidden="true"></div>
+              <p class="vol-legend">Each square is the shelf space of one&nbsp;Waterwal pack &mdash; about a shoebox.</p>
+            </div>
+          </div>
+          <dl class="compare-facts" id="compareFacts"></dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ USE CASES ============================ -->
+  <section class="section section--paper2" id="uses">
+    <div class="wrap">
+      <span class="eyebrow reveal">Where it's used</span>
+      <h2 class="display reveal" style="--d:60ms">Homes, businesses, and the people who plan for both.</h2>
+
+      <div class="grid-3 mt-l">
+        <article class="card reveal">
+          <div class="card-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg></div>
+          <h3>At home</h3>
+          <p>Front and back doors, garage thresholds, cellar lights and air bricks. A home pack lives in a cupboard and takes less room than a winter coat.</p>
+        </article>
+        <article class="card reveal" style="--d:100ms">
+          <div class="card-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-5h6v5"/><path d="M9 11h.01M15 11h.01"/></svg></div>
+          <h3>For business</h3>
+          <p>Shopfronts, loading bays, server rooms and lift shafts. Stock enough for the whole frontage without giving up a single pallet position.</p>
+        </article>
+        <article class="card reveal" style="--d:200ms">
+          <div class="card-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11z"/></svg></div>
+          <h3>In a response plan</h3>
+          <p>Facilities teams, housing associations and municipalities keep packs in every building rather than one depot — because the depot is never where the water is.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ SPECS ============================ -->
+  <section class="section section--marine" id="specs">
+    <div class="wrap">
+      <div style="max-width:720px">
+        <span class="eyebrow reveal">Specification</span>
+        <h2 class="display reveal" style="--d:60ms">Everything, on one page.</h2>
+        <p class="lede mt-m reveal" style="--d:100ms">One bag. Figures are typical values for the standard unit; the business unit is listed separately in the datasheet.</p>
+      </div>
+
+      <dl class="specs reveal" style="--d:140ms">
+        <div class="spec"><dt>Dry weight</dt><dd>420 g</dd></div>
+        <div class="spec"><dt>Weight, activated</dt><dd>~18 kg</dd></div>
+        <div class="spec"><dt>Dry dimensions</dt><dd>62 &times; 26 &times; 2 cm</dd></div>
+        <div class="spec"><dt>Activated dimensions</dt><dd>62 &times; 26 &times; 11 cm</dd></div>
+        <div class="spec"><dt>Activation time</dt><dd>3&ndash;5 min in fresh water</dd></div>
+        <div class="spec"><dt>Absorbent core</dt><dd>Cross-linked sodium polyacrylate</dd></div>
+        <div class="spec"><dt>Outer</dt><dd>Woven polypropylene, UV-stabilised</dd></div>
+        <div class="spec"><dt>Shelf life</dt><dd>10 years, sealed and dry</dd></div>
+        <div class="spec"><dt>Working range</dt><dd>&minus;20&nbsp;&deg;C to 60&nbsp;&deg;C</dd></div>
+        <div class="spec"><dt>Disposal</dt><dd>Air-dries, then general waste</dd></div>
+        <div class="spec"><dt>Salt water</dt><dd>Reduced swell &mdash; use one extra layer</dd></div>
+        <div class="spec"><dt>Reuse</dt><dd>Single flood event; dry storage between drills</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============================ QUOTES (placeholder copy) ============================ -->
+  <section class="section" id="stories">
+    <div class="wrap">
+      <span class="eyebrow reveal">In their words</span>
+      <h2 class="display reveal" style="--d:60ms">The relief is the product.</h2>
+
+      <div class="quotes">
+        <figure class="quote reveal">
+          <blockquote>&ldquo;We'd been flooded twice. The third time we were ready in ten minutes and I slept through the night.&rdquo;</blockquote>
+          <figcaption><b>Placeholder testimonial</b>Homeowner &middot; river valley</figcaption>
+        </figure>
+        <figure class="quote reveal" style="--d:100ms">
+          <blockquote>&ldquo;Storage was the whole objection. Now every one of our sites holds its own kit in a cupboard.&rdquo;</blockquote>
+          <figcaption><b>Placeholder testimonial</b>Facilities manager &middot; retail group</figcaption>
+        </figure>
+        <figure class="quote reveal" style="--d:200ms">
+          <blockquote>&ldquo;It's the first thing I've bought that made the worry smaller instead of bigger.&rdquo;</blockquote>
+          <figcaption><b>Placeholder testimonial</b>Café owner &middot; town centre</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ FAQ ============================ -->
+  <section class="section section--paper2" id="faq">
+    <div class="wrap wrap--narrow">
+      <span class="eyebrow reveal">Questions</span>
+      <h2 class="display reveal" style="--d:60ms">Sensible things to ask.</h2>
+
+      <div class="faq">
+        <div class="faq-item">
+          <button class="faq-q">How high a barrier can I actually build?<span class="faq-sign" aria-hidden="true"></span></button>
+          <div class="faq-a"><div>Each activated bag is about 11&nbsp;cm high. Stacked in overlapping layers, three layers give roughly 30&nbsp;cm of protection, which covers the large majority of doorway flooding. Beyond about 50&nbsp;cm you want an engineered barrier, and we'll tell you so rather than sell you more bags.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Do they stop water completely?<span class="faq-sign" aria-hidden="true"></span></button>
+          <div class="faq-a"><div>They divert and slow it. Like any sandbag-style barrier, a small amount will seep through and around; the point is to keep the bulk of it out of your rooms and buy you hours. Laying a plastic sheet under the first layer improves the seal considerably.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">What if the flood arrives before I do?<span class="faq-sign" aria-hidden="true"></span></button>
+          <div class="faq-a"><div>That's the useful part. The bags activate on contact with the incoming water, so laying them dry in the path of a rising flood still works. You don't need a hose, and you don't need to have been early.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Can I reuse them?<span class="faq-sign" aria-hidden="true"></span></button>
+          <div class="faq-a"><div>Treat them as single-event. After a flood the bags have absorbed whatever the water was carrying, so they go out with general waste once dried. Unused bags kept dry stay ready for ten years.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Is the material safe around people and gardens?<span class="faq-sign" aria-hidden="true"></span></button>
+          <div class="faq-a"><div>The core is the same non-toxic super-absorbent polymer used in horticulture and hygiene products. It isn't food, but it isn't hazardous either. Follow local rules for disposal after contaminated floodwater.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">How many do I need?<span class="faq-sign" aria-hidden="true"></span></button>
+          <div class="faq-a"><div>Roughly two bags per metre of opening, per layer. A 1&nbsp;m front door at three layers is six bags. There's a calculator on the buy page that does this for you, and you can send us a photo of your frontage if you'd rather we did it.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ CTA ============================ -->
+  <section class="cta-band">
+    <div class="wrap">
+      <h2 class="reveal">You can't move the weather.<br>You can move this into a drawer.</h2>
+      <p class="lede reveal" style="--d:80ms">Packs ship flat within two working days. Choose a size, or tell us your frontage and we'll work it out with you.</p>
+      <div class="btn-row reveal" style="--d:160ms">
+        <a class="btn btn--light btn--lg" href="buy.html">Buy the product <span class="arrow">&#8594;</span></a>
+        <a class="btn btn--onmarine-ghost btn--lg" href="#specs">Read the specification</a>
+      </div>
+    </div>
+    <svg class="cta-waves" viewBox="0 0 1440 120" preserveAspectRatio="none" height="110" aria-hidden="true">
+      <path class="wave-a" d="M0 60 q90 -30 180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 V120 H0 Z" fill="#6FA8BC" opacity=".5"/>
+      <path class="wave-b" d="M0 78 q90 26 180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 V120 H0 Z" fill="#B9D9E3" opacity=".4"/>
+    </svg>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="index.html" aria-label="Waterwal home">
+          <svg class="brand-mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="15" fill="#0E3A4E"/>
+            <path d="M6 19q5-4 10 0t10 0" stroke="#6FA8BC" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+            <path d="M6 13q5-4 10 0t10 0" stroke="rgba(255,255,255,.45)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          </svg>
+          <span class="brand-name">Water<em>wal</em></span>
+        </a>
+        <p style="margin-top:16px;max-width:34ch;color:var(--ink-3);font-size:14px">
+          Flood barriers that take up no room until the day they matter.
+        </p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#specs">Specification</a></li>
+          <li><a href="buy.html">Packs &amp; pricing</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#stories">Stories</a></li>
+          <li><a href="#uses">For business</a></li>
+          <li><a href="#faq">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#faq">Terms</a></li>
+          <li><a href="#faq">Privacy</a></li>
+          <li><a href="#faq">Returns</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Waterwal &mdash; design mock-up, not a live shop.</span>
+      <span>Figures shown are placeholders pending test data.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

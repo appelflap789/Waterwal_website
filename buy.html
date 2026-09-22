@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buy Waterwal — packs &amp; pricing</title>
+<meta name="description" content="Choose a Waterwal pack, work out how many bags your frontage needs, and order. Mock-up checkout — no payment is taken.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%230E3A4E'/><path d='M6 19q5-4 10 0t10 0' stroke='%236FA8BC' stroke-width='2.4' fill='none' stroke-linecap='round'/></svg>">
+</head>
+<body>
+
+<div class="mock-note">Design mock-up — this checkout takes no payment and places no order.</div>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap">
+    <nav class="nav">
+      <a class="brand" href="index.html" aria-label="Waterwal home">
+        <svg class="brand-mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="15" fill="#0E3A4E"/>
+          <path d="M6 19q5-4 10 0t10 0" stroke="#6FA8BC" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          <path d="M6 13q5-4 10 0t10 0" stroke="rgba(255,255,255,.45)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-name">Water<em>wal</em></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html#how">How it works</a></li>
+        <li><a href="index.html#space">The space it takes</a></li>
+        <li><a href="index.html#specs">Specification</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a class="btn btn--ghost" href="index.html">Back to home</a>
+        <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span></span></button>
+      </div>
+    </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="wrap">
+      <ul>
+        <li><a href="index.html#how">How it works</a></li>
+        <li><a href="index.html#space">The space it takes</a></li>
+        <li><a href="index.html#specs">Specification</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+        <li><a href="index.html">Back to home</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="buy-hero">
+    <div class="wrap">
+      <span class="eyebrow">Packs &amp; pricing</span>
+      <h1>Work out what you need.<br>It's usually less than you think.</h1>
+      <p class="lede mt-m">Every pack ships flat within two working days. Prices include VAT. If your frontage is awkward, send us a photo and we'll size it with you.</p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="buy-layout" id="buyLayout">
+
+      <!-- ---------------- LEFT ---------------- -->
+      <div>
+        <!-- 1. Pack -->
+        <section class="buy-block">
+          <h2 class="block-title"><span class="num">1</span> Choose a pack</h2>
+          <div class="tiers" id="tiers" role="radiogroup" aria-label="Choose a pack"></div>
+        </section>
+
+        <!-- 2. Calculator -->
+        <section class="buy-block">
+          <h2 class="block-title"><span class="num">2</span> How many bags?</h2>
+          <div class="calc">
+            <div class="calc-fields">
+              <div class="field">
+                <label for="calcWidth">Total width to protect (metres)</label>
+                <input type="number" id="calcWidth" value="1.0" min="0.3" max="60" step="0.1" inputmode="decimal">
+              </div>
+              <div class="field">
+                <label for="calcHeight">Height you want to hold back</label>
+                <select id="calcHeight">
+                  <option value="11">11 cm — one layer, heavy rain run-off</option>
+                  <option value="22">22 cm — two layers, typical doorway</option>
+                  <option value="33" selected>33 cm — three layers, recommended</option>
+                  <option value="44">44 cm — four layers, known flood zone</option>
+                </select>
+              </div>
+            </div>
+            <div class="calc-out">
+              <p class="r">You'd want about <b id="calcBags">6</b> bags <span id="calcNote" style="color:var(--ink-3)"></span></p>
+              <button class="btn btn--ghost" id="calcApply" type="button">Use this in my order</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Quantity -->
+        <section class="buy-block">
+          <h2 class="block-title"><span class="num">3</span> How many packs</h2>
+          <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+            <div class="stepper">
+              <button type="button" id="qtyMinus" aria-label="One fewer pack">&minus;</button>
+              <output id="qtyOut" aria-live="polite">1</output>
+              <button type="button" id="qtyPlus" aria-label="One more pack">+</button>
+            </div>
+            <p style="font-size:14.5px;color:var(--ink-2)" id="qtyNote">1 pack &middot; 6 bags in total</p>
+          </div>
+        </section>
+
+        <!-- 4. Details -->
+        <section class="buy-block">
+          <h2 class="block-title"><span class="num">4</span> Where should it go?</h2>
+          <form class="form-grid" id="orderForm" novalidate>
+            <div class="field"><label for="fName">Full name</label><input id="fName" type="text" autocomplete="name" placeholder="Jane de Vries"></div>
+            <div class="field"><label for="fEmail">Email</label><input id="fEmail" type="email" autocomplete="email" placeholder="jane@example.com"></div>
+            <div class="field span-2"><label for="fAddr">Address</label><input id="fAddr" type="text" autocomplete="street-address" placeholder="Kanaalstraat 12"></div>
+            <div class="field"><label for="fPost">Postcode</label><input id="fPost" type="text" autocomplete="postal-code" placeholder="3512 AB"></div>
+            <div class="field"><label for="fCity">City</label><input id="fCity" type="text" autocomplete="address-level2" placeholder="Utrecht"></div>
+            <div class="field span-2">
+              <label for="fCountry">Country</label>
+              <select id="fCountry">
+                <option>Netherlands</option><option>Belgium</option><option>Germany</option>
+                <option>United Kingdom</option><option>France</option><option>Elsewhere in the EU</option>
+              </select>
+            </div>
+            <div class="field span-2">
+              <label for="fNotes">Anything we should know? (optional)</label>
+              <input id="fNotes" type="text" placeholder="Two doors and a garage, one of them 1.4 m wide">
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <!-- ---------------- RIGHT ---------------- -->
+      <aside>
+        <div class="summary">
+          <h3>Your order</h3>
+          <div style="margin-top:16px">
+            <div class="sum-line"><span id="sumPack">Home Pack</span><span id="sumPackPrice">&euro;179</span></div>
+            <div class="sum-line"><span>Packs</span><span id="sumQty">1</span></div>
+            <div class="sum-line"><span>Bags in total</span><span id="sumBags">20</span></div>
+            <div class="sum-line"><span>Shipping</span><span id="sumShip">Free</span></div>
+          </div>
+          <div class="sum-total">
+            <span class="lbl">Total, VAT included</span>
+            <span class="val" id="sumTotal">&euro;179</span>
+          </div>
+          <button class="btn btn--primary btn--block btn--lg" id="placeOrder" type="button">Place the order</button>
+          <ul class="assurances">
+            <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6FA8BC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Ships flat in 2 working days</li>
+            <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6FA8BC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 60-day returns on unopened packs</li>
+            <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6FA8BC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 10-year shelf-life guarantee</li>
+            <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6FA8BC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Free sizing advice from a photo</li>
+          </ul>
+          <p style="margin-top:18px;font-size:12.5px;color:var(--ink-3);line-height:1.5">
+            Mock-up only. No payment details are requested and no order is placed.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Confirmation -->
+    <div class="confirm" id="confirm">
+      <div class="confirm-ico">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h3>That's it &mdash; you're covered.</h3>
+      <p id="confirmDetail">Your pack is on its way.</p>
+      <p style="margin-top:22px;font-size:13px;color:var(--ink-3)">This is a design mock-up. Nothing was charged, and nothing will be shipped.</p>
+      <div class="btn-row" style="justify-content:center;margin-top:30px">
+        <a class="btn btn--ghost" href="index.html">Back to the homepage</a>
+        <button class="btn btn--primary" type="button" id="againBtn">Start another order</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-bottom" style="margin-top:0;border-top:0;padding-top:0">
+      <span>&copy; 2026 Waterwal &mdash; design mock-up, not a live shop.</span>
+      <span><a href="index.html" style="text-decoration:none">Home</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
