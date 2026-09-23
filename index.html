@@ -13,9 +13,6 @@
 </head>
 <body>
 
-<!-- Mock-up banner: remove before any real deployment -->
-<div class="mock-note">Design mock-up — placeholder copy, figures and testimonials. Nothing here is a live offer.</div>
-
 <header class="site-header" id="siteHeader">
   <div class="wrap">
     <nav class="nav">
@@ -37,6 +34,15 @@
       </ul>
 
       <div class="nav-actions">
+        <label class="language-picker" for="languageSelect">
+          <span class="sr-only">Language</span>
+          <select id="languageSelect" aria-label="Language">
+            <option value="en">EN</option>
+            <option value="nl">NL</option>
+            <option value="de">DE</option>
+            <option value="fr">FR</option>
+          </select>
+        </label>
         <a class="btn btn--ghost" href="#faq">Talk to us</a>
         <a class="btn btn--primary" href="buy.html">Buy the product</a>
         <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span></span></button>

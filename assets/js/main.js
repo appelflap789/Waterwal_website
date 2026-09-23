@@ -9,6 +9,120 @@
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ------------------------------------------------------------- language */
+  var translations = {
+    'How it works': { nl: 'Hoe het werkt', de: 'So funktioniert es', fr: 'Comment ça marche' },
+    'The space it takes': { nl: 'De ruimte die het inneemt', de: 'Der benötigte Platz', fr: 'L’espace nécessaire' },
+    "Where it's used": { nl: 'Waar het wordt gebruikt', de: 'Wo es eingesetzt wird', fr: 'Où il est utilisé' },
+    'Specification': { nl: 'Specificaties', de: 'Spezifikation', fr: 'Caractéristiques' },
+    'FAQ': { nl: 'Veelgestelde vragen', de: 'FAQ', fr: 'FAQ' },
+    'Talk to us': { nl: 'Neem contact op', de: 'Kontakt aufnehmen', fr: 'Parlez-nous' },
+    'Buy the product': { nl: 'Product kopen', de: 'Produkt kaufen', fr: 'Acheter le produit' },
+    'Back to home': { nl: 'Terug naar home', de: 'Zur Startseite', fr: 'Retour à l’accueil' },
+    'New': { nl: 'Nieuw', de: 'Neu', fr: 'Nouveau' },
+    'Ready before the forecast is': { nl: 'Klaar voordat de voorspelling komt', de: 'Bereit, bevor die Vorhersage kommt', fr: 'Prêt avant les prévisions' },
+    'Flood protection that lives in a drawer.': { nl: 'Waterbescherming die in een lade past.', de: 'Hochwasserschutz, der in eine Schublade passt.', fr: 'Une protection contre les inondations qui tient dans un tiroir.' },
+    'See how it works': { nl: 'Bekijk hoe het werkt', de: 'So funktioniert es', fr: 'Voir comment ça marche' },
+    'Ships flat · 10-year shelf life · Nothing to maintain': { nl: 'Plat geleverd · 10 jaar houdbaar · Geen onderhoud', de: 'Flach geliefert · 10 Jahre haltbar · Wartungsfrei', fr: 'Livré à plat · 10 ans de conservation · Aucun entretien' },
+    'Dry weight of one bag': { nl: 'Drooggewicht van één zak', de: 'Trockengewicht eines Sacks', fr: 'Poids sec d’un sac' },
+    'Weight once activated': { nl: 'Gewicht na activering', de: 'Gewicht nach Aktivierung', fr: 'Poids après activation' },
+    'Average activation time': { nl: 'Gemiddelde activeringstijd', de: 'Durchschnittliche Aktivierungszeit', fr: 'Temps d’activation moyen' },
+    'Shelf life, sealed': { nl: 'Houdbaarheid, ongeopend', de: 'Haltbarkeit, versiegelt', fr: 'Durée de conservation, scellé' },
+    'The honest version': { nl: 'De eerlijke versie', de: 'Die ehrliche Version', fr: 'La version honnête' },
+    "Most people find out their plan doesn't work at 2 a.m.": { nl: 'De meeste mensen ontdekken om twee uur ’s nachts dat hun plan niet werkt.', de: 'Die meisten merken um zwei Uhr nachts, dass ihr Plan nicht funktioniert.', fr: 'La plupart des gens découvrent à deux heures du matin que leur plan ne fonctionne pas.' },
+    'The old way': { nl: 'De oude manier', de: 'Die alte Methode', fr: 'L’ancienne méthode' },
+    'With Waterwal': { nl: 'Met Waterwal', de: 'Mit Waterwal', fr: 'Avec Waterwal' },
+    'Three steps. No training.': { nl: 'Drie stappen. Geen training nodig.', de: 'Drei Schritte. Keine Schulung.', fr: 'Trois étapes. Aucune formation.' },
+    'Lay them down': { nl: 'Leg ze neer', de: 'Auslegen', fr: 'Posez-les' },
+    'Add water': { nl: 'Voeg water toe', de: 'Wasser hinzufügen', fr: 'Ajoutez de l’eau' },
+    'Stack and walk away': { nl: 'Stapel ze en loop weg', de: 'Stapeln und gehen', fr: 'Empilez et partez' },
+    'The unique bit': { nl: 'Het bijzondere', de: 'Das Besondere', fr: 'La différence' },
+    'Where it’s used': { nl: 'Waar het wordt gebruikt', de: 'Wo es eingesetzt wird', fr: 'Où il est utilisé' },
+    'At home': { nl: 'Thuis', de: 'Zu Hause', fr: 'À la maison' },
+    'For business': { nl: 'Voor bedrijven', de: 'Für Unternehmen', fr: 'Pour les entreprises' },
+    'In a response plan': { nl: 'In een noodplan', de: 'Im Notfallplan', fr: 'Dans un plan d’intervention' },
+    'Everything, on one page.': { nl: 'Alles op één pagina.', de: 'Alles auf einer Seite.', fr: 'Tout sur une page.' },
+    'In their words': { nl: 'Hun ervaringen', de: 'Ihre Worte', fr: 'Leurs témoignages' },
+    'The relief is the product.': { nl: 'De opluchting is het product.', de: 'Die Erleichterung ist das Produkt.', fr: 'Le soulagement, c’est le produit.' },
+    'Questions': { nl: 'Vragen', de: 'Fragen', fr: 'Questions' },
+    'Sensible things to ask.': { nl: 'Logische vragen.', de: 'Sinnvolle Fragen.', fr: 'Les bonnes questions.' },
+    'How high a barrier can I actually build?': { nl: 'Hoe hoog kan ik een barrière bouwen?', de: 'Wie hoch kann ich eine Barriere bauen?', fr: 'Quelle hauteur puis-je réellement atteindre ?' },
+    'Do they stop water completely?': { nl: 'Houden ze water volledig tegen?', de: 'Halten sie Wasser vollständig auf?', fr: 'Arrêtent-ils complètement l’eau ?' },
+    'What if the flood arrives before I do?': { nl: 'Wat als het water er eerder is dan ik?', de: 'Was, wenn das Hochwasser vor mir kommt?', fr: 'Et si l’inondation arrive avant moi ?' },
+    'Can I reuse them?': { nl: 'Kan ik ze opnieuw gebruiken?', de: 'Kann ich sie wiederverwenden?', fr: 'Puis-je les réutiliser ?' },
+    'How many do I need?': { nl: 'Hoeveel heb ik er nodig?', de: 'Wie viele brauche ich?', fr: 'Combien m’en faut-il ?' },
+    'Read the specification': { nl: 'Bekijk de specificaties', de: 'Spezifikation lesen', fr: 'Lire les caractéristiques' },
+    'Packs & pricing': { nl: 'Pakketten en prijzen', de: 'Pakete und Preise', fr: 'Packs et tarifs' },
+    'Product': { nl: 'Product', de: 'Produkt', fr: 'Produit' },
+    'Company': { nl: 'Bedrijf', de: 'Unternehmen', fr: 'Entreprise' },
+    'Legal': { nl: 'Juridisch', de: 'Rechtliches', fr: 'Mentions légales' },
+    'Choose a pack': { nl: 'Kies een pakket', de: 'Paket auswählen', fr: 'Choisir un pack' },
+    'How many bags?': { nl: 'Hoeveel zakken?', de: 'Wie viele Säcke?', fr: 'Combien de sacs ?' },
+    'How many packs': { nl: 'Hoeveel pakketten?', de: 'Wie viele Pakete?', fr: 'Combien de packs ?' },
+    'Where should it go?': { nl: 'Waar moet het naartoe?', de: 'Wohin soll es geliefert werden?', fr: 'Où doit-il être livré ?' },
+    'Your order': { nl: 'Jouw bestelling', de: 'Ihre Bestellung', fr: 'Votre commande' },
+    'Packs': { nl: 'Pakketten', de: 'Pakete', fr: 'Packs' },
+    'Bags in total': { nl: 'Zakken in totaal', de: 'Säcke insgesamt', fr: 'Sacs au total' },
+    'Shipping': { nl: 'Verzending', de: 'Versand', fr: 'Livraison' },
+    'Free': { nl: 'Gratis', de: 'Kostenlos', fr: 'Gratuit' },
+    'Total, VAT included': { nl: 'Totaal, inclusief btw', de: 'Gesamt, inkl. MwSt.', fr: 'Total, TVA incluse' },
+    'Place the order': { nl: 'Bestelling plaatsen', de: 'Bestellung aufgeben', fr: 'Passer la commande' },
+    'Full name': { nl: 'Volledige naam', de: 'Vollständiger Name', fr: 'Nom complet' },
+    'Email': { nl: 'E-mail', de: 'E-Mail', fr: 'E-mail' },
+    'Address': { nl: 'Adres', de: 'Adresse', fr: 'Adresse' },
+    'Postcode': { nl: 'Postcode', de: 'Postleitzahl', fr: 'Code postal' },
+    'City': { nl: 'Plaats', de: 'Ort', fr: 'Ville' },
+    'Country': { nl: 'Land', de: 'Land', fr: 'Pays' }
+    , 'Doorway Kit': { nl: 'Deurkit', de: 'Tür-Kit', fr: 'Kit pour porte' }
+    , 'Home Pack': { nl: 'Thuispakket', de: 'Hauspaket', fr: 'Pack maison' }
+    , 'Business Pack': { nl: 'Bedrijfspakket', de: 'Geschäftspaket', fr: 'Pack professionnel' }
+    , 'Most chosen': { nl: 'Meest gekozen', de: 'Am beliebtesten', fr: 'Le plus choisi' }
+    , 'per bag': { nl: 'per zak', de: 'pro Sack', fr: 'par sac' }
+    , 'Stores in a shoebox': { nl: 'Past in een schoenendoos', de: 'Passt in einen Schuhkarton', fr: 'Tient dans une boîte à chaussures' }
+    , 'Covers ~1 m': { nl: 'Dekt ongeveer 1 m', de: 'Deckt ca. 1 m ab', fr: 'Couvre environ 1 m' }
+    , '8.4 kg total': { nl: '8,4 kg totaal', de: '8,4 kg insgesamt', fr: '8,4 kg au total' }
+    , 'Covers ~3 m': { nl: 'Dekt ongeveer 3 m', de: 'Deckt ca. 3 m ab', fr: 'Couvre environ 3 m' }
+    , '25 kg total': { nl: '25 kg totaal', de: '25 kg insgesamt', fr: '25 kg au total' }
+    , 'Covers ~10 m': { nl: 'Dekt ongeveer 10 m', de: 'Deckt ca. 10 m ab', fr: 'Couvre environ 10 m' }
+  };
+  var language = localStorage.getItem('waterwal-language') || 'en';
+  var translate = function (text) {
+    return language === 'en' || !translations[text] ? text : (translations[text][language] || text);
+  };
+  var translateStaticText = function () {
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    var node;
+    while ((node = walker.nextNode())) {
+      var value = node.nodeValue.trim();
+      if (value && translations[value]) node.nodeValue = node.nodeValue.replace(value, translate(value));
+    }
+    var heroTitle = $('.hero h1');
+    if (heroTitle && language !== 'en') {
+      var heroTitles = {
+        nl: 'Waterbescherming die in een <em>lade</em> past.',
+        de: 'Hochwasserschutz, der in eine <em>Schublade</em> passt.',
+        fr: 'Une protection contre les inondations qui tient dans un <em>tiroir</em>.'
+      };
+      heroTitle.innerHTML = heroTitles[language];
+    }
+  };
+  var languageSelect = $('#languageSelect');
+  var applyLanguage = function (value) {
+    language = value;
+    localStorage.setItem('waterwal-language', language);
+    document.documentElement.lang = language;
+    if (languageSelect) languageSelect.value = language;
+    translateStaticText();
+  };
+  if (languageSelect) {
+    languageSelect.addEventListener('change', function () {
+      localStorage.setItem('waterwal-language', languageSelect.value);
+      window.location.reload();
+    });
+    languageSelect.value = language;
+  }
+  applyLanguage(language);
+
   /* ---------------------------------------------------------------- header */
   var header = $('#siteHeader');
   if (header) {
@@ -144,7 +258,7 @@
         cell.classList.toggle('lead', mode === 'waterwal' && i === 0);
       });
       facts.innerHTML = conf.rows.map(function (pair) {
-        return '<div class="fact"><dt>' + pair[0] + '</dt><dd>' + pair[1] + '</dd></div>';
+        return '<div class="fact"><dt>' + translate(pair[0]) + '</dt><dd>' + pair[1] + '</dd></div>';
       }).join('');
     };
 
@@ -192,15 +306,15 @@
   tiersEl.innerHTML = TIERS.map(function (t) {
     return '' +
       '<div class="tier" role="radio" tabindex="0" data-id="' + t.id + '" aria-checked="false">' +
-        (t.best ? '<span class="pill-best">Most chosen</span>' : '') +
+        (t.best ? '<span class="pill-best">' + translate('Most chosen') + '</span>' : '') +
         '<span class="tier-radio" aria-hidden="true"></span>' +
         '<span>' +
-          '<span class="tier-name">' + t.name + '</span>' +
+          '<span class="tier-name">' + translate(t.name) + '</span>' +
           '<span class="tier-desc" style="display:block">' + t.desc + '</span>' +
           '<span class="tier-meta">' + t.meta.map(function (m) { return '<span>' + m + '</span>'; }).join('') + '</span>' +
         '</span>' +
         '<span class="tier-price"><span class="p" style="display:block">' + euro(t.price) + '</span>' +
-        '<span class="u" style="display:block">€' + (t.price / t.bags).toFixed(2) + ' per bag</span></span>' +
+        '<span class="u" style="display:block">€' + (t.price / t.bags).toFixed(2) + ' ' + translate('per bag') + '</span></span>' +
       '</div>';
   }).join('');
 
