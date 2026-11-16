@@ -1,61 +1,85 @@
-# Waterwal — website mock-up
+# Waterwal — website
 
-A two-page static mock-up for Waterwal water-absorbing flood bags. No build step,
-no dependencies: open `index.html` in a browser.
+Nederlandstalige landingspagina voor Waterwal-zakken (waterabsorberende zakken zonder zand).
+Een bezoeker vult een adres in, ziet per overstromingsscenario hoe diep het water kan komen,
+krijgt een zakkenadvies en kan zich op de wachtlijst zetten. Er wordt niets verkocht.
+
+Geen build-stap: open `index.html` in een browser. De site staat op GitHub Pages (`CNAME` → waterwal.eu).
 
 ```
-index.html            Homepage — the scroll story, ending in a buy CTA
-buy.html              Packs, a sizing calculator, and a dummy checkout
-assets/css/styles.css All styling (design tokens at the top)
-assets/js/main.js     All behaviour (no libraries)
+index.html               de pagina
+privacy.html             privacyverklaring (bevat nog [invulvelden])
+assets/css/tokens.css    ontwerpkeuzes: kleur, lettertype, afronding, golf
+assets/css/styles.css    opmaak van alle onderdelen
+assets/js/config.js      instellingen: zakmaten, prijs, scenario's, Worker-adres
+assets/js/main.js        gedrag: adres zoeken, resultaat, advies, kaart, wachtlijst
+assets/js/tune.js        ontwerppaneel, alleen geladen met ?tune
+assets/img/              productfoto's
+worker/                  Cloudflare Worker (tussenstation naar de overstromingsdata + wachtlijst)
+PLAN.md                  het oorspronkelijke bouwplan
 ```
 
-## What it does
+## Het ontwerp aanpassen
 
-**Homepage** — hero with a cross-section illustration of a doorway holding water back,
-a stat strip, an old-way/new-way contrast, three how-it-works steps, an interactive
-storage-space comparison (the core USP), use cases, full specification, testimonials,
-FAQ accordion, and a closing CTA to the buy page.
+Open de site met `?tune` achter het adres (bijvoorbeeld `index.html?tune`). Rechts verschijnt een
+paneel. Kies een richting (Polder, Diep, Signaal) en draai aan kleur, lettertype, afronding en de
+waterlijn. Tevreden? Klik **Exporteer tokens** en plak het blok in `assets/css/tokens.css`, over het
+stuk tussen `TUNE:START` en `TUNE:END`. Kies je een ander lettertype, pas dan ook de Google
+Fonts-regel in de `<head>` van `index.html` en `privacy.html` aan (de export zegt welke).
 
-**Buy page** — three pack tiers, a calculator that turns "metres of frontage × height"
-into a bag count and recommends a pack, a quantity stepper, a live order summary,
-a delivery form, and a confirmation screen. Nothing is sent anywhere and no payment
-is taken.
+Handig: `?tune=diep` of `?tune=signaal` opent meteen die richting. `?adres=Kerkstraat 2 Tiel` vult
+een adres in en start de check.
 
-## Positioning it was built to
+## Waar de data vandaan komt
 
-Calm and reassuring rather than alarmist. The fear of flooding is the reason someone
-is on the page, so the copy names it once and then spends the rest of its time being
-the answer to it. The unique selling point — that the product takes up almost no
-space — is given its own full section with a drawn-to-scale comparison, because
-storage is the objection that kills flood-barrier purchases.
+| Wat | Bron |
+|---|---|
+| Adres zoeken | PDOK Locatieserver (gratis, rechtstreeks vanuit de browser) |
+| Waterdiepte per scenario | LIWO van Rijkswaterstaat, lagen "Maximale waterdiepte Nederland" kaart 1 t/m 5 |
+| Type gebied (achter een dijk of niet) | PDOK, risicogebieden Richtlijn Overstromingsrisico's |
+| Achtergrondkaart | PDOK BRT Achtergrondkaart |
 
-## Everything here that is a placeholder
+Kaart 1 t/m 5 zijn de kansklassen grote, middelgrote, kleine, zeer kleine en extreem kleine kans.
+Dat staat in het Deltares-rapport "Technische uitgangspunten en methode LIWO afgeleide kaarten"
+(november 2025). Kaart 5 is dezelfde kaart als op overstroomik.nl.
 
-All of it is invented for the mock-up and needs replacing before this goes anywhere near
-a customer:
+LIWO laat browsers niet rechtstreeks meelezen. Daarom vraagt de site de dieptes op via de Worker:
+`https://waterwal-risk.waterwal.workers.dev/risk?lat=..&lon=..`
 
-- **Product figures** — 420 g dry, 18 kg activated, 62 × 26 × 2 cm, 3–5 min activation,
-  10-year shelf life, −20 °C to 60 °C. Plausible for a sodium-polyacrylate flood bag,
-  but not measured.
-- **Comparison numbers** — 20 sandbags at 0.47 m³ / 420 kg versus 20 Waterwal bags at
-  0.0064 m³ / 8.4 kg, and the 73:1 storage ratio the grid draws. Derived from the dry
-  dimensions above, so they move if those move. The grid is in `MODES` in `main.js`.
-- **Prices** — €59 / €179 / €449, free shipping over €100, €6.95 below it.
-  In `TIERS` in `main.js`.
-- **Testimonials** — clearly labelled "Placeholder testimonial" in the markup and on
-  screen. Do not ship real-looking quotes until you have real ones.
-- **Sizing rule** — the calculator assumes each bag is 62 cm long and 11 cm high, so
-  roughly two bags per metre per layer. Worth validating against a real stack.
+## De Worker
 
-Both pages carry a sand-coloured banner at the top saying it is a mock-up. Remove the
-`.mock-note` div from both files when the content becomes real.
+Staat in `worker/` en draait op Cloudflare (account van de eigenaar, naam `waterwal-risk`).
+Opnieuw uitrollen na een wijziging:
 
-## Notes for taking it further
+```
+cd worker
+export CLOUDFLARE_API_TOKEN=...   # nooit in een bestand zetten: deze repo is openbaar
+export CLOUDFLARE_ACCOUNT_ID=...
+npx wrangler deploy
+```
 
-- Design tokens (colour, radius, shadow, type) are the `:root` block in `styles.css` —
-  change the palette there and the whole site follows.
-- Fonts are Fraunces (display) and Inter (text), loaded from Google Fonts. Self-host
-  them if the site needs to work offline.
-- The page is light-mode only by deliberate choice; there is no dark palette to maintain.
-- Checked at 1440px and 400px wide; no horizontal overflow at either.
+## Wat nog moet gebeuren voor livegang
+
+1. **Wachtlijst aanzetten.** De Worker stuurt inschrijvingen door naar Brevo, maar heeft daarvoor
+   gegevens nodig. Tot die er zijn krijgt een bezoeker de melding "De wachtlijst staat nog niet aan".
+   Maak in Brevo een lijst met de attributen `POSTCODE` (tekst), `ADVIES_ZAKKEN` (getal),
+   `KLEUR` (tekst) en `SCENARIO` (tekst). Zet daarna in de map `worker`:
+   ```
+   npx wrangler secret put BREVO_API_KEY
+   npx wrangler secret put BREVO_LIST_ID
+   npx wrangler secret put BREVO_DOI_TEMPLATE_ID   # optioneel: bevestigingsmail (double opt-in)
+   ```
+2. **Zakmaten meten.** Alle maten in `BAG` in `assets/js/config.js` zijn aannames (60 cm lang,
+   12 cm per laag, stapel tot 60 cm). Het advies en de tekeningen rekenen ermee.
+3. **Privacyverklaring invullen.** Bedrijfsnaam, KvK-nummer en contactadres in `privacy.html`.
+4. **Licentie van de LIWO-data nagaan** en de bronvermelding in de footer zo nodig aanpassen.
+5. **Publiceren.** Het werk staat op de branch `makeover`. Pas na samenvoegen met `main` en een
+   push staat het op waterwal.eu.
+
+## Aannames in de teksten
+
+- "Ongeveer 300 kilo zand" voor 20 zandzakken gaat uit van 15 kilo per gevulde zandzak.
+- "Past op een plank of onder het bed" is afgeleid van de foto van het vacuümpak, niet gemeten.
+- Het advies bij zout water (vooraf laten opzwellen met kraanwater) is gangbaar voor dit soort
+  zakken, maar staat niet in de specificaties van de leverancier. Nagaan.
+- Er staan geen testimonials op de site. Voeg ze pas toe als ze echt zijn.

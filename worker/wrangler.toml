@@ -1,0 +1,9 @@
+# Cloudflare Worker voor waterwal.eu
+# Deploy:  cd worker && npx wrangler deploy
+# Wrangler leest CLOUDFLARE_API_TOKEN en CLOUDFLARE_ACCOUNT_ID uit je omgeving.
+# Zet hier NOOIT een token of account-ID in: deze repo is openbaar.
+
+name = "waterwal-risk"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+workers_dev = true

@@ -1,2 +1,12 @@
 .DS_Store
 Thumbs.db
+
+# Cloudflare Worker
+worker/.dev.vars
+.wrangler/
+worker/.wrangler/
+node_modules/
+
+# Eigen notities, niet publiceren
+Zakken info.txt
+ui-design-guidance.md
