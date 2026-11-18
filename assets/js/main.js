@@ -124,7 +124,7 @@
     var lagen = layers + (layers === 1 ? ' laag' : ' lagen');
     var sc = state.scenario && scenarioById(state.scenario);
     if (state.mode === 'idle') cap = 'Voorbeeld: 12 cm water buiten, binnen blijft het droog.';
-    else if (flooded) cap = fmtDepth(depthM) + ' water: hoger dan een stapel zakken kan keren.';
+    else if (flooded || (state.tooDeep && !state.custom)) cap = fmtDepth(depthM) + ' water: hoger dan een stapel zakken veilig kan keren.';
     else if (state.custom || !sc) cap = 'Eigen waterhoogte: ' + fmtDepth(depthM) + '. ' + lagen + ' zakken houden het buiten.';
     else if (depthM <= 0.004) cap = sc.name + ': je adres blijft droog.';
     else cap = sc.name + ': ' + fmtDepth(depthM) + ' water. ' + lagen + ' zakken houden het buiten.';
@@ -241,6 +241,8 @@
       var risk = {};
       (data.scenarios || []).forEach(function (s) { risk[s.id] = (typeof s.depth_m === 'number' && s.depth_m > 0.004) ? s.depth_m : null; });
       state.risk = risk; state.zones = data.zones || [];
+      state.chance = data.chance || null;
+      state.riskLevel = riskLevelOf(data.chance, risk);
       state.mode = 'result';
       setMsg('');
       showResult();
@@ -268,7 +270,6 @@
       var b = el('button', { type: 'button', class: 'chip', role: 'radio', 'data-id': s.id, 'data-level': levelOf(d), 'aria-checked': s.id === state.scenario ? 'true' : 'false', tabindex: s.id === state.scenario ? '0' : '-1' });
       b.appendChild(el('i', { class: 'chip__dot', 'aria-hidden': 'true' }));
       var name = el('span', { class: 'chip__name' }, s.name);
-      name.appendChild(el('span', { class: 'chip__freq' }, s.freq));
       b.appendChild(name);
       b.appendChild(el('span', { class: 'chip__depth' }, d == null ? 'droog' : fmtDepth(d)));
       b.addEventListener('click', function () { selectScenario(s.id, true); });
@@ -290,14 +291,60 @@
     $('#resPre').textContent = ''; $('#resValue').textContent = '00 cm'; $('#resPost').textContent = '';
     $('#resSub').textContent = 'We zoeken je adres op de overstromingskaart…';
     state.risk = null; state.scenario = null;
+    $('#resRisk').hidden = true;
     renderChips();
     resultEl.hidden = false;
     resultEl.classList.add('is-loading');
   }
 
+  // Oordeel per adres: eerst de officiële kanskaart, anders het eerste natte scenario.
+  function riskLevelOf(chance, risk) {
+    // De kanskaart dekt niet alles (o.a. regionale wateren); is hij leeg, dan de scenario's.
+    if (chance && chance.wet) return C.RISK_BY_CLASS[chance.wet] || 'minimaal';
+    var ids = ['k1', 'k2', 'k3', 'k4', 'k5'];
+    for (var i = 0; i < ids.length; i++) if (risk[ids[i]] != null) return C.RISK_BY_FIRST_WET[ids[i]];
+    return 'geen';
+  }
+
+  // Kunnen zakken hier helpen? Water moet komen, maar onder B.helpLimitCm blijven.
+  // Eerst de scenario's (exacte cm), anders de kanskaart (drempels 20 en 50 cm).
+  var CLASS_NAME = { 5: 'grote kans', 4: 'middelgrote kans', 3: 'kleine kans', 2: 'zeer kleine kans', 1: 'extreem kleine kans' };
+  var RAIN_TEXT = 'Met zakken houd je water tot ongeveer ' + B.helpLimitCm + ' cm buiten, bijvoorbeeld bij hevige regen of een ondergelopen straat.';
+  function fitOf(risk, chance) {
+    var lim = B.helpLimitCm;
+    var wet = C.SCENARIOS.filter(function (s) { return risk[s.id] != null; });
+    var ok = wet.filter(function (s) { return risk[s.id] * 100 <= lim; });
+    if (ok.length) {
+      var s = ok[0], deeper = wet.some(function (w) { return risk[w.id] * 100 > lim; });
+      return { fit: deeper ? 'deels' : 'ja', text: 'Zakken kunnen helpen: bij een overstroming met een ' + s.name.toLowerCase() +
+        ' komt het water hier tot ' + fmtDepth(risk[s.id]) + '.' };
+    }
+    if (wet.length) return { fit: 'ja', text: RAIN_TEXT };
+    // Scenario's droog: kijk naar de kanskaart (geen exacte cm, alleen drempels).
+    if (chance && chance.wet) {
+      if (!chance.over50 || chance.over50 < chance.wet) return { fit: 'ja', text: 'Zakken kunnen helpen: er is een ' + CLASS_NAME[chance.wet] +
+        ' dat hier water komt, en die kans is kleiner dat het boven 50 cm komt.' };
+      return { fit: 'ja', text: RAIN_TEXT };
+    }
+    return null;
+  }
+
+  function renderRisk() {
+    var r = C.RISK[state.riskLevel] || C.RISK.geen;
+    var box = $('#resRisk');
+    box.setAttribute('data-level', state.riskLevel);
+    $('#resRiskLabel').textContent = r.label;
+    $('#resRiskText').textContent = r.text;
+    var f = fitOf(state.risk, state.chance);
+    $('#resFit').hidden = !f;
+    if (f) { $('#resFit').setAttribute('data-fit', f.fit); $('#resFitText').textContent = f.text; }
+    box.hidden = false;
+  }
+
   function showResult() {
     resultEl.classList.remove('is-loading');
     resultEl.hidden = false;
+    renderRisk();
     // Start bij het meest waarschijnlijke scenario waarin er water staat.
     var first = C.SCENARIOS.filter(function (s) { return state.risk[s.id] != null; })[0];
     renderChips();
@@ -339,12 +386,12 @@
     var sc = scenarioById(state.scenario);
     var d = state.risk[state.scenario];
     var allDry = C.SCENARIOS.every(function (s) { return state.risk[s.id] == null; });
-    var when = 'bij een overstroming met een ' + sc.name.toLowerCase() + ' (' + sc.freq + ').';
+    var when = 'bij een overstroming met een ' + sc.name.toLowerCase() + '.';
     $('#resAddr').textContent = state.address;
     if (d == null) {
       $('#resPre').textContent = ''; $('#resValue').textContent = 'Droog'; $('#resPost').textContent = '';
       $('#resSub').textContent = allDry
-        ? 'In alle vijf de scenario\'s van Rijkswaterstaat blijft je adres droog. Een hevige bui kan nog wel voor wateroverlast zorgen.'
+        ? 'In alle scenario\'s van Rijkswaterstaat blijft je adres droog. Een hevige bui kan nog wel voor wateroverlast zorgen.'
         : 'Je adres blijft droog ' + when;
     } else {
       $('#resPre').textContent = 'Tot'; $('#resValue').textContent = fmtDepth(d); $('#resPost').textContent = 'water';
@@ -565,7 +612,7 @@
 
   function updateWaitAdvice(advice) {
     currentAdvice = advice;
-    var text = advice.total + ' zakken, ' + state.color;
+    var text = advice.total + ' zakken, ' + (state.color === 'zwart' ? 'met handvatten' : 'zonder handvatten');
     if (state.postcode) text += ', postcode ' + state.postcode;
     $('#waitAdviceText').textContent = text;
     $('#waitAdvice').hidden = false;

@@ -156,11 +156,16 @@
         <div class="result" id="result" hidden>
           <p class="result__addr"><span id="resAddr"></span> <button class="link" type="button" id="resChange">wijzig</button></p>
           <div class="result__main" aria-live="polite">
+            <div class="risk" id="resRisk" hidden>
+              <p class="risk__label"><i class="risk__dot" aria-hidden="true"></i><span id="resRiskLabel"></span></p>
+              <p class="risk__text" id="resRiskText"></p>
+              <p class="fit" id="resFit" hidden><i class="fit__icon" aria-hidden="true"></i><span id="resFitText"></span></p>
+            </div>
             <p class="result__value"><span class="result__pre" id="resPre">Tot</span> <strong id="resValue">–</strong> <span id="resPost">water</span></p>
             <p class="result__sub" id="resSub"></p>
           </div>
 
-          <p class="result__label" id="chipsLabel">Kies een scenario</p>
+          <p class="result__label" id="chipsLabel">Hoe hoog komt het water? Kies een overstroming</p>
           <div class="chips" id="chips" role="radiogroup" aria-labelledby="chipsLabel"></div>
 
           <p class="result__zone" id="resZone" hidden></p>
@@ -226,8 +231,8 @@
 
             <fieldset class="seg" id="colorSeg">
               <legend>Welke zak?</legend>
-              <label><input type="radio" name="color" value="zwart" checked><span><i class="dot dot--zwart"></i>Zwart <small>met handvatten</small></span></label>
-              <label><input type="radio" name="color" value="wit"><span><i class="dot dot--wit"></i>Wit <small>zonder handvatten</small></span></label>
+              <label><input type="radio" name="color" value="zwart" checked><span><i class="dot dot--zwart"></i>Met handvatten <small>zwart</small></span></label>
+              <label><input type="radio" name="color" value="wit"><span><i class="dot dot--wit"></i>Zonder handvatten <small>wit</small></span></label>
             </fieldset>
 
             <div class="summary__price">

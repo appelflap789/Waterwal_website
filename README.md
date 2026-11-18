@@ -42,6 +42,9 @@ een adres in en start de check.
 Kaart 1 t/m 5 zijn de kansklassen grote, middelgrote, kleine, zeer kleine en extreem kleine kans.
 Dat staat in het Deltares-rapport "Technische uitgangspunten en methode LIWO afgeleide kaarten"
 (november 2025). Kaart 5 is dezelfde kaart als op overstroomik.nl.
+De site toont kaart 1 t/m 4 als knoppen. Kaart 5 en de herhalingstijden staan er bewust niet op.
+Het oordeel bovenaan (hoog, gemiddeld, laag, minimaal of geen overstromingsrisico) komt uit een
+andere LIWO-kaart: de plaatsgebonden overstromingskans, de kans per jaar dat het op die plek nat wordt.
 
 LIWO laat browsers niet rechtstreeks meelezen. Daarom vraagt de site de dieptes op via de Worker:
 `https://waterwal-risk.waterwal.workers.dev/risk?lat=..&lon=..`

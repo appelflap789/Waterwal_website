@@ -24,6 +24,16 @@ const LAYERS = [
   ['k5', 'LIWO_Basis:MaximaleWaterdiepteNederland_Kaart5'],
 ];
 
+// Plaatsgebonden overstromingskans: kans per jaar dat het op deze plek nat wordt (0 cm),
+// of dat het water hoger komt dan 20 / 50 cm. Klassen 1-5 volgens de LIWO-legenda:
+// 1 extreem klein (<1/30.000), 2 zeer klein, 3 klein (1/300-1/3.000),
+// 4 middelgroot (1/30-1/300), 5 groot (>1/30 per jaar). 0 of geen data = geen kans.
+const CHANCE_LAYERS = [
+  ['wet', 'LIWO_Basis:plaatsgebonden_kans_totaal_huidig_0'],
+  ['over20', 'LIWO_Basis:plaatsgebonden_kans_totaal_huidig_20'],
+  ['over50', 'LIWO_Basis:plaatsgebonden_kans_totaal_huidig_50'],
+];
+
 const ALLOWED_ORIGINS = [
   /^https:\/\/(www\.)?waterwal\.eu$/,
   /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/,
@@ -94,6 +104,18 @@ async function depthFor(layer, lat, lon) {
   return Math.round(v * 100) / 100;
 }
 
+async function chanceFor(layer, lat, lon) {
+  const res = await fetchWithTimeout(featureInfoUrl(LIWO_WMS, layer, lat, lon, 'application/json'));
+  if (!res.ok) throw new Error(`LIWO ${res.status}`);
+  const data = await res.json();
+  const v = data && data.features && data.features[0] && data.features[0].properties
+    ? data.features[0].properties.GRAY_INDEX
+    : null;
+  if (typeof v !== 'number' || !isFinite(v)) return null;
+  const c = Math.round(v);
+  return c >= 1 && c <= 5 ? c : null;
+}
+
 async function zonesFor(lat, lon) {
   // text/plain omdat de JSON-variant de volledige (MB's grote) polygonen meestuurt.
   const res = await fetchWithTimeout(featureInfoUrl(PDOK_ZONE_WMS, 'NZ.RiskZone', lat, lon, 'text/plain'));
@@ -122,7 +144,7 @@ async function handleRisk(request, ctx) {
   const rlat = Math.round(lat * 1e4) / 1e4;
   const rlon = Math.round(lon * 1e4) / 1e4;
 
-  const cacheKey = new Request(`https://cache.waterwal/risk/${rlat}/${rlon}`);
+  const cacheKey = new Request(`https://cache.waterwal/risk-v2/${rlat}/${rlon}`);
   const cache = caches.default;
   const hit = await cache.match(cacheKey);
   if (hit) {
@@ -133,8 +155,12 @@ async function handleRisk(request, ctx) {
   }
 
   let depths;
+  let chances;
   try {
-    depths = await Promise.all(LAYERS.map(([, layer]) => depthFor(layer, rlat, rlon)));
+    [depths, chances] = await Promise.all([
+      Promise.all(LAYERS.map(([, layer]) => depthFor(layer, rlat, rlon))),
+      Promise.all(CHANCE_LAYERS.map(([, layer]) => chanceFor(layer, rlat, rlon))),
+    ]);
   } catch (err) {
     return json({ error: 'bron niet bereikbaar' }, 502, cors);
   }
@@ -151,6 +177,7 @@ async function handleRisk(request, ctx) {
     lat: rlat,
     lon: rlon,
     scenarios: LAYERS.map(([id], i) => ({ id, depth_m: depths[i] })),
+    chance: Object.fromEntries(CHANCE_LAYERS.map(([id], i) => [id, chances[i]])),
     zones,
     source: 'LIWO (Rijkswaterstaat), PDOK',
   };

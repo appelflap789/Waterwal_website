@@ -35,7 +35,20 @@ worker/src/index.js   Cloudflare Worker: GET /risk, POST /subscribe
    PDOK WMS GetFeatureInfo as `text/plain` (the JSON variant ships MBs of polygon geometry).
    LIWO sends no CORS headers, which is the only reason the Worker exists.
 3. Kaart1–5 = grote / middelgrote / kleine / zeer kleine / extreem kleine kans (verified in the
-   Deltares LIWO method report, Nov 2025). Labels and frequencies live in `SCENARIOS`, not the Worker.
+   Deltares LIWO method report, Nov 2025). The site shows k1–k4 with those official names and
+   no return periods (owner's choice, 2026-11-18); k5 is returned but ignored. Depth always rises
+   from k1 to k5 (rarer = heavier flood), so k1 is often dry where k2 is wet. That is correct.
+5. Risk verdict per address (hoog / gemiddeld / laag / minimaal / geen) comes from the LIWO layer
+   `plaatsgebonden_kans_totaal_huidig_0` (Worker field `chance.wet`, classes 1–5, legend in
+   `config.js` RISK). Do NOT put these risk words on the scenario chips: an earlier attempt did,
+   and "hoog risico = droog" confused the owner. Fallback when `chance` is missing: first wet scenario.
+6. "Kunnen zakken helpen?" line (`fitOf` in main.js): yes when a scenario has water up to
+   `BAG.helpLimitCm` (config, default 50; owner thinks in ~30 cm), otherwise the probability map's
+   20/50 cm thresholds (`chance.over20`, `chance.over50`). Heavy rain: RWS layer
+   `bij_70mm_per_2uur` (geo.rijkswaterstaat.nl klimaat_effect_atlas) returns PALETTE_INDEX 0 on
+   ordinary addresses (it is a main-road stress test), LIWO `Bovenregionale_stresstest_wateroverlast`
+   returned -9999 everywhere tested. National 0.5 m rain maps (70/90 mm in 1 h, 155 mm in 2 h,
+   Klimaateffectatlas, Nelen & Schuurmans) were announced; not found as a service yet (2026-11-18).
 4. Map: Leaflet 1.9.4 from cdnjs, loaded lazily after the first successful check. LIWO WMS tiles
    load directly (images need no CORS).
 
