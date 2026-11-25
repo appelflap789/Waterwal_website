@@ -10,3 +10,10 @@ node_modules/
 # Eigen notities, niet publiceren
 Zakken info.txt
 ui-design-guidance.md
+
+# Impeccable werkbestanden (alleen config en surface briefs gaan mee)
+.impeccable/mocks/
+.impeccable/build/
+.impeccable/questions/
+.impeccable/review/
+__pycache__/

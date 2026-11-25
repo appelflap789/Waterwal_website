@@ -16,8 +16,11 @@ old English two-page mock-up (buy page, translations) is gone on purpose.
 ## Files
 
 ```
-assets/js/config.js   window.WATERWAL: WORKER_URL, BAG (dimensions/price), SCENARIOS (k1..k5 +
-                      LIWO layer names), ZONES (A-D copy), OPENINGS, map URLs
+assets/js/config.js   window.WATERWAL: WORKER_URL (waitlist only), BAG (dimensions/price),
+                      ADRES_URL, SCENARIOS (r70/r90 + tile URLs), KLASSEN (FCAB), TILES, OPENINGS
+assets/data/adressen/ per-postcode address files (generated, see tools/hevige-regen)
+assets/tiles/         own map tiles: regen70/90 (water), gebouwen70/90 (FCAB colours)
+tools/hevige-regen/   data pipeline (Python), see "Data flow"
 assets/js/main.js     one IIFE, numbered sections: helpers, computeAdvice, scene, address
                       search, result/chips, advice, map, waitlist, page chrome
 assets/js/tune.js     Tweakpane panel; injected by main.js only when the URL has ?tune
@@ -26,35 +29,38 @@ assets/css/styles.css components; reads tokens only (no hard-coded brand colours
 worker/src/index.js   Cloudflare Worker: GET /risk, POST /subscribe
 ```
 
-## Data flow
+## Data flow (rebuilt 2026-11-25: heavy rain only, no LIWO)
 
-1. Autocomplete: PDOK Locatieserver `suggest` (browser, CORS ok) → `lookup` by id, or `free`
-   when the visitor just presses enter. Gives `centroide_ll` + `postcode`.
-2. `GET {WORKER_URL}/risk?lat&lon` → `{scenarios:[{id:'k1',depth_m:null|number}…], zones:[{code,description}]}`.
-   The Worker does 5 LIWO WMS GetFeatureInfo calls (`GRAY_INDEX`, metres, -9999 = dry) plus one
-   PDOK WMS GetFeatureInfo as `text/plain` (the JSON variant ships MBs of polygon geometry).
-   LIWO sends no CORS headers, which is the only reason the Worker exists.
-3. Kaart1–5 = grote / middelgrote / kleine / zeer kleine / extreem kleine kans (verified in the
-   Deltares LIWO method report, Nov 2025). The site shows k1–k4 with those official names and
-   no return periods (owner's choice, 2026-11-18); k5 is returned but ignored. Depth always rises
-   from k1 to k5 (rarer = heavier flood), so k1 is often dry where k2 is wet. That is correct.
-5. Risk verdict per address (hoog / gemiddeld / laag / minimaal / geen) comes from the LIWO layer
-   `plaatsgebonden_kans_totaal_huidig_0` (Worker field `chance.wet`, classes 1–5, legend in
-   `config.js` RISK). Do NOT put these risk words on the scenario chips: an earlier attempt did,
-   and "hoog risico = droog" confused the owner. Fallback when `chance` is missing: first wet scenario.
-6. "Kunnen zakken helpen?" line (`fitOf` in main.js): yes when a scenario has water up to
-   `BAG.helpLimitCm` (config, default 50; owner thinks in ~30 cm), otherwise the probability map's
-   20/50 cm thresholds (`chance.over20`, `chance.over50`). Heavy rain: RWS layer
-   `bij_70mm_per_2uur` (geo.rijkswaterstaat.nl klimaat_effect_atlas) returns PALETTE_INDEX 0 on
-   ordinary addresses (it is a main-road stress test), LIWO `Bovenregionale_stresstest_wateroverlast`
-   returned -9999 everywhere tested. National 0.5 m rain maps (70/90 mm in 1 h, 155 mm in 2 h,
-   Klimaateffectatlas, Nelen & Schuurmans) were announced; not found as a service yet (2026-11-18).
-4. Map: Leaflet 1.9.4 from cdnjs, loaded lazily after the first successful check. LIWO WMS tiles
-   load directly (images need no CORS).
+The owner decided the check uses ONLY the Klimaateffectatlas "waterdiepte bij hevige neerslag"
+data: the 70 mm/1 h and 90 mm/1 h water-depth GeoTIFFs and the FCAB omgevingsscore wateroverlast
+(download portal kea-downloadportal.cas-platform.nl, CC BY 4.0, cite "Klimaateffectatlas, 2026").
+LIWO/Rijkswaterstaat is gone from the page; the Worker is only used for `/subscribe`. PDOK is still
+used for the address search and the base map (location only, never for the outcome).
+Coverage: the 12 Utrecht tiles the owner has (Utrecht + direct surroundings).
 
-Worker CORS allow-list: waterwal.eu, www.waterwal.eu, localhost. `/risk` also allows the
-`null` origin so the page works when opened from disk; `/subscribe` does not.
-`/subscribe` returns 503 `not_configured` until `BREVO_API_KEY` + `BREVO_LIST_ID` secrets exist.
+1. Address: PDOK Locatieserver `suggest` → `lookup`/`free` with `adresseerbaarobject_id` + postcode.
+   Not an address (street/postcode) → "kies een adres met huisnummer".
+2. `assets/data/adressen/<pc4>.js` is loaded as a `<script>` (not fetch, so `index.html` also works
+   opened from disk) and calls `WATERWAL_ADRES(pc4, {vboId: "k70,k90,d70,d90,f"})`. Missing file or id
+   → "nog geen gegevens, alleen Utrecht en directe omgeving".
+   k = FCAB class 1..7 (config `KLASSEN`), d = p99 water depth against the facade in cm,
+   f = 1 when k70 is FCAB's own value.
+3. 70 mm uses FCAB's own `waterdiepte_klasse`/`waterdiepte_p99` per BAG pand. FCAB does not exist for
+   90 mm, so we compute it the FCAB way: 99th percentile of water depth in a 0.5 m ring outside the
+   pand (calibrated: on 2561 Utrecht panden this reproduces FCAB's 70 mm class in 93%).
+4. Result: verdict box in the FCAB colour of the chosen storm, headline "Tot X cm" (p99), two chips
+   (70 / 90 mm). The chip drives drawing, advice and map. >50 cm → tooDeep, advice falls back to 20 cm.
+5. Map (Leaflet): base map + water tiles + building tiles of the chosen storm, checkboxes per layer.
+   All tiles are our own PNGs (z13-16, Leaflet upscales to 19; building tiles are 512 px for sharpness).
+
+Pipeline (`tools/hevige-regen/`, raw data in Desktop/wateroverlast, outside the public repo):
+`fetch_bag.py` (BAG panden + verblijfsobjecten in the tiles) → `extract_fcab.py` (cut the national
+FCAB GeoPackage to the area) → `pand_stats.py --buffer 0.5` on 70 and 90 mm (p99 per pand; numpy +
+zstandard, conda env `main`) → `build_adressen.py` → `assets/data/adressen/`.
+Tiles: `make_tiles.py` (water, per storm) → `assets/tiles/regen70-utrecht`, `regen90-utrecht`;
+`make_fcab_tiles.py` (buildings; `--csv` for 90 mm) → `gebouwen70-utrecht`, `gebouwen90-utrecht`.
+`calibrate_fcab.py` documents how the 0.5 m ring was chosen. RD↔WGS84 via Schreutelaar formulas (~0.3 m).
+New area: download its tiles, run the pipeline, widen `TILES.bounds` and `AREA_NAME` in config.js.
 
 ## State and rendering (`main.js`)
 
@@ -96,3 +102,6 @@ Two traps found while building:
 Deep link for tests: `index.html?adres=Kerkstraat 2e-11 Tiel` (10 cm / 40 cm),
 `?adres=Achterom 20 Lopik` (88 cm, too deep), `?adres=Noordendijk 250 Dordrecht` (dry).
 JS syntax: `node --check`.
+
+## Redesign (2026-11-25)
+Designed with the Impeccable skill (PRODUCT.md, .impeccable/surfaces) and Claude Design (canvas "Waterwal redesign"). White ground, logo green (tokens.css --p-h 163), Bricolage Grotesque + Hanken Grotesk. Sections: hero (address check + door photo), #uitkomst (result + map, hidden until a check), #advies (drawing + openings + summary), waarom (two photos), zo-werkt-het (dark band), zakken, vragen, wachtlijst. All JS ids unchanged. Photos in assets/img/*.webp are AI-generated (Nano Banana, prompts embedded in assets/plates/*.png) and labelled as such on the page.

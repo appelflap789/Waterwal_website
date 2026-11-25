@@ -6,33 +6,33 @@
 /* TUNE:START */
 :root {
   /* merkkleur (HSL, zodat de tinten ervan worden afgeleid) */
-  --p-h: 198;
-  --p-s: 82%;
-  --p-l: 22%;
+  --p-h: 163;
+  --p-s: 78%;
+  --p-l: 20%;
   --on-primary: #ffffff;
 
   /* vlakken en tekst */
-  --bg: #f2efe8;
-  --bg-2: #e9e5db;
-  --surface: #fffdf9;
-  --ink: #0e1f27;
-  --ink-2: #41545d;
-  --ink-3: #74858c;
-  --line: #d9d3c6;
+  --bg: #ffffff;
+  --bg-2: #eef5f1;
+  --surface: #ffffff;
+  --ink: #0f2a22;
+  --ink-2: #2e4a40;
+  --ink-3: #5f766d;
+  --line: #d3e2da;
 
   /* water */
   --water: #2f9fd0;
 
   /* typografie */
-  --font-head: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
-  --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-head: "Bricolage Grotesque", "Hanken Grotesk", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
   --fs-base: 17px;
   --ratio: 1.3;
-  --track-head: -0.03em;
-  --weight-head: 650;
+  --track-head: -0.025em;
+  --weight-head: 750;
 
   /* vorm */
-  --r: 18px;
+  --r: 14px;
   --shadow-a: 0.1;
   --density: 1;
 
@@ -88,6 +88,8 @@
               0 8px 24px -8px hsl(var(--p-h) 40% 12% / var(--shadow-a));
   --shadow-2: 0 2px 6px hsl(var(--p-h) 40% 12% / calc(var(--shadow-a) * 0.8)),
               0 24px 56px -16px hsl(var(--p-h) 40% 12% / calc(var(--shadow-a) * 2.2));
+
+  --head-ink: #0b3b2d;
 
   /* tekening */
   --scene-sky: color-mix(in srgb, var(--water) 7%, var(--surface));

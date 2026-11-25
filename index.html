@@ -4,16 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Waterwal · Hoe hoog komt het water bij jouw voordeur?</title>
-  <meta name="description" content="Vul je adres in en zie hoe diep het water bij jou kan komen. Waterwal-zakken zwellen in 3 tot 4 minuten op tot een dam. Zonder zand, plat op te bergen.">
-  <meta name="theme-color" content="#0a4a66">
+  <meta name="description" content="Vul je adres in en zie hoe hoog het water bij een wolkbreuk tegen je gebouw komt. Waterwal-zakken zwellen in 3 tot 4 minuten op tot een dam. Zonder zand, plat op te bergen.">
+  <meta name="theme-color" content="#0b5943">
   <meta property="og:title" content="Hoe hoog komt het water bij jouw voordeur?">
-  <meta property="og:description" content="Check je adres op de overstromingskaart van Rijkswaterstaat en krijg een zakkenadvies.">
+  <meta property="og:description" content="Check of je gebouw rood kleurt op de kaart van de Klimaateffectatlas en krijg een zakkenadvies.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="nl_NL">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a4a66'/%3E%3Cpath d='M5 19q3.7-5 7.3 0t7.4 0 7.3 0' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <meta property="og:image" content="assets/img/hero-deur.webp">
+  <link rel="icon" href="assets/img/logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Hanken+Grotesk:wght@400..700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
@@ -23,12 +24,11 @@
   <header class="site-header" id="siteHeader">
     <div class="wrap site-header__in">
       <a class="brand" href="#top" aria-label="Waterwal, naar boven">
+        <span class="brand__logo" aria-hidden="true"><img src="assets/img/logo.png" width="256" height="256" alt=""></span>
         <span class="brand__word">Waterwal</span>
-        <svg class="brand__wave" viewBox="0 0 96 8" aria-hidden="true"><path d="M1 5q6-5 12 0t12 0 12 0 12 0 12 0 12 0 12 0 10 0" /></svg>
       </a>
       <nav class="nav" aria-label="Hoofdmenu">
         <a href="#check">Check je adres</a>
-        <a href="#waarom">Waarom</a>
         <a href="#zo-werkt-het">Zo werkt het</a>
         <a href="#zakken">De zakken</a>
         <a href="#vragen">Vragen</a>
@@ -42,148 +42,92 @@
     <section class="hero" id="check">
       <div class="wrap hero__grid">
         <div class="hero__intro">
-          <p class="eyebrow">Waterabsorberende zakken, zonder zand</p>
-          <h1>Hoe hoog komt het water bij <em>jouw</em> voordeur?</h1>
-          <p class="lede">Vul je adres in. Je ziet per scenario hoe diep het water kan komen, en hoeveel Waterwal-zakken je nodig hebt om het buiten te houden.</p>
+          <h1>Hoe hoog komt het water bij jouw voordeur?</h1>
+          <p class="lede">Vul je adres in. Je ziet hoe hoog regenwater bij een wolkbreuk tegen je gebouw komt, en hoeveel zakken je nodig hebt.</p>
 
           <form class="check" id="checkForm" autocomplete="off" novalidate>
             <label class="check__label" for="addr">Je adres</label>
-            <div class="check__row">
-              <div class="combo">
-                <svg class="combo__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.900 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
-                <input id="addr" name="addr" type="text" inputmode="search" enterkeyhint="search"
-                       placeholder="Postcode en huisnummer, of straat en plaats"
-                       role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="addrList" aria-describedby="checkMsg">
-                <ul class="combo__list" id="addrList" role="listbox" aria-label="Adressuggesties" hidden></ul>
-              </div>
-              <button class="btn btn--primary" type="submit" id="checkBtn">
-                <span class="btn__label">Check mijn adres</span>
-                <span class="spinner" aria-hidden="true"></span>
-              </button>
+            <div class="combo">
+              <svg class="combo__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              <input id="addr" name="addr" type="text" inputmode="search" enterkeyhint="search"
+                     placeholder="Postcode en huisnummer, of straat en plaats"
+                     role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="addrList" aria-describedby="checkMsg">
+              <ul class="combo__list" id="addrList" role="listbox" aria-label="Adressuggesties" hidden></ul>
             </div>
-            <p class="check__msg" id="checkMsg" role="status" aria-live="polite">Gratis en zonder account. Je adres wordt niet opgeslagen.</p>
+            <button class="btn btn--primary btn--big" type="submit" id="checkBtn">
+              <span class="btn__label">Check mijn adres</span>
+              <span class="spinner" aria-hidden="true"></span>
+            </button>
+            <p class="check__msg" id="checkMsg" role="status" aria-live="polite"></p>
           </form>
 
+          <ul class="notes">
+            <li>Gratis</li>
+            <li>Zonder account</li>
+            <li>Je adres wordt niet opgeslagen</li>
+          </ul>
           <p class="hero__alt">
             <button class="link" type="button" id="manualBtn">Liever zelf een waterhoogte kiezen?</button>
           </p>
         </div>
 
-        <!-- De waterlijn: doorsnede van een voordeur -->
-        <figure class="scene" id="scene">
-          <svg viewBox="0 0 560 400" role="img" aria-labelledby="sceneTitle" preserveAspectRatio="xMidYMax slice">
-            <title id="sceneTitle">Doorsnede van een voordeur: buiten staat water, zakken voor de deur houden het tegen.</title>
-            <defs>
-              <clipPath id="clipOut"><rect x="0" y="0" width="341" height="330"/></clipPath>
-              <clipPath id="clipIn"><rect x="347" y="60" width="213" height="270"/></clipPath>
-            </defs>
-
-            <!-- binnen -->
-            <rect class="sc-inside" x="347" y="60" width="213" height="270"/>
-            <g class="sc-deco">
-              <path d="M452 60v40"/>
-              <path class="sc-deco__fill" d="M432 118a20 20 0 0 1 40 0z"/>
-              <rect x="474" y="284" width="64" height="46" rx="4"/>
-              <path d="M474 304h64"/>
-              <path class="sc-deco__fill" d="M497 284v-10h18v10z"/>
-              <path d="M506 274c-2-16-14-20-18-30M506 274c0-18 6-28 4-42M506 274c4-14 16-16 20-26"/>
-              <rect class="sc-deco__fill" x="366" y="326" width="52" height="4" rx="2"/>
-            </g>
-            <text class="sc-tag" x="372" y="86">binnen</text>
-            <text class="sc-tag" x="40" y="26">buiten</text>
-
-            <!-- meetlat -->
-            <g class="sc-ruler">
-              <path d="M22 42V330"/>
-              <path d="M22 318h5M22 306h5M22 294h5M22 282h5M22 258h5M22 246h5M22 234h5M22 222h5M22 198h5M22 186h5M22 174h5M22 162h5M22 138h5M22 126h5M22 114h5M22 102h5M22 78h5M22 66h5M22 54h5"/>
-              <path class="sc-ruler__major" d="M22 270h10M22 210h10M22 150h10M22 90h10"/>
-              <text x="36" y="273.500">50</text>
-              <text x="36" y="213.500">100</text>
-              <text x="36" y="153.500">150</text>
-              <text x="36" y="93.500">200 cm</text>
-            </g>
-
-            <!-- fiets, voor de schaal -->
-            <g class="sc-bike">
-              <circle cx="160" cy="296" r="34"/>
-              <circle cx="250" cy="296" r="34"/>
-              <path d="M160 296l28-48h51l11 48M188 248l13 48h-41M201 296l38-48M239 248l-4-14h12M180 248h18"/>
-            </g>
-
-            <!-- water buiten -->
-            <g clip-path="url(#clipOut)">
-              <g class="sc-level" id="scLevelOut">
-                <rect class="sc-water" x="0" y="330" width="341" height="420"/>
-                <g transform="translate(0 330)">
-                  <g class="sc-wave">
-                    <g class="sc-wave__amp">
-                      <path class="sc-water" d="M-60 0q15-5 30 0t30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0V8H-60z"/>
-                      <path class="sc-waterline" d="M-60 0q15-5 30 0t30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0"/>
-                    </g>
-                  </g>
-                </g>
-              </g>
-            </g>
-
-            <!-- water binnen (alleen als de stapel te laag is) -->
-            <g clip-path="url(#clipIn)" class="sc-flood" id="scFlood">
-              <g class="sc-level" id="scLevelIn">
-                <rect class="sc-water" x="347" y="330" width="213" height="420"/>
-                <path class="sc-waterline" d="M347 330h213"/>
-              </g>
-            </g>
-
-            <!-- grond, muur, deur -->
-            <rect class="sc-ground" x="0" y="330" width="560" height="70"/>
-            <path class="sc-groundline" d="M0 330h560"/>
-            <path class="sc-wall" d="M334 20h226v40H360v18h-26z"/>
-            <rect class="sc-door" x="341" y="78" width="6" height="252" rx="1"/>
-            <rect class="sc-door" x="335" y="202" width="6" height="3" rx="1.500"/>
-
-            <!-- zakken (door JS getekend) -->
-            <g id="scBags"></g>
-
-            <!-- waterstand-label -->
-            <g class="sc-level" id="scLevelLabel">
-              <path class="sc-mark" d="M14 330h18"/>
-              <text class="sc-depth" id="scDepth" x="66" y="318">12 cm</text>
-            </g>
-          </svg>
-          <figcaption class="scene__cap" id="sceneCap">Voorbeeld: 12 cm water buiten, binnen blijft het droog.</figcaption>
+        <figure class="hero__photo">
+          <img src="assets/img/hero-deur.webp" width="1100" height="1366" alt="Zwarte, opgezwollen zakken in verband gestapeld voor een houten voordeur in een bakstenen gevel">
+          <p class="hero__chip"><i aria-hidden="true">!</i>Voorbeeld: Amsterdamsestraatweg 300 · tot 15 cm water</p>
+          <figcaption>Illustratiefoto, gemaakt met AI.</figcaption>
         </figure>
+      </div>
+    </section>
 
-        <!-- Resultaat: scenario's -->
+    <!-- ───────────── Uitkomst ───────────── -->
+    <section class="outcome" id="uitkomst" aria-label="Uitkomst voor je adres" hidden>
+      <div class="wrap outcome__grid">
         <div class="result" id="result" hidden>
-          <p class="result__addr"><span id="resAddr"></span> <button class="link" type="button" id="resChange">wijzig</button></p>
+          <p class="result__addr"><span id="resAddr"></span> <button class="link" type="button" id="resChange">ander adres</button></p>
           <div class="result__main" aria-live="polite">
-            <div class="risk" id="resRisk" hidden>
-              <p class="risk__label"><i class="risk__dot" aria-hidden="true"></i><span id="resRiskLabel"></span></p>
+            <p class="result__value"><span class="result__pre" id="resPre">Tot</span> <strong id="resValue">–</strong> <span id="resPost">water</span></p>
+            <p class="result__sub" id="resSub"></p>
+            <div class="risk verdict" id="resRisk" hidden>
+              <p class="risk__label"><i class="risk__dot verdict__dot" id="resRiskDot" aria-hidden="true"></i><span id="resRiskLabel"></span></p>
               <p class="risk__text" id="resRiskText"></p>
               <p class="fit" id="resFit" hidden><i class="fit__icon" aria-hidden="true"></i><span id="resFitText"></span></p>
             </div>
-            <p class="result__value"><span class="result__pre" id="resPre">Tot</span> <strong id="resValue">–</strong> <span id="resPost">water</span></p>
-            <p class="result__sub" id="resSub"></p>
           </div>
 
-          <p class="result__label" id="chipsLabel">Hoe hoog komt het water? Kies een overstroming</p>
+          <p class="result__label" id="chipsLabel">Kies een bui</p>
           <div class="chips" id="chips" role="radiogroup" aria-labelledby="chipsLabel"></div>
 
-          <p class="result__zone" id="resZone" hidden></p>
           <a class="btn btn--primary" href="#advies" id="toAdvice">Bekijk mijn zakkenadvies <span aria-hidden="true">↓</span></a>
-          <p class="fineprint">Indicatie op basis van landelijke overstromingsscenario's van Rijkswaterstaat (LIWO). Geen garantie. De kaart gaat over rivieren, meren en zee, niet over hevige regen. Bij dreiging: volg NL-Alert en je gemeente. Meer weten? Kijk op <a href="https://www.overstroomik.nl" target="_blank" rel="noopener">overstroomik.nl</a>.</p>
+          <p class="fineprint">Berekend met de Klimaateffectatlas (2026): waterdiepte bij hevige neerslag (70 en 90 mm in een uur) en de FCAB-omgevingsscore wateroverlast. Het gaat om regenwater dat op straat blijft staan, niet om rivieren, meren of zee (kijk daarvoor op <a href="https://www.overstroomik.nl" target="_blank" rel="noopener">overstroomik.nl</a>). Nu alleen voor Utrecht en directe omgeving. Geen garantie.</p>
         </div>
+            <div class="card card--map outcome__map" id="mapCard" hidden>
+              <div class="card__head">
+                <h3>Je adres op de kaart</h3>
+                <span class="pill pill--quiet" id="mapScenario"></span>
+              </div>
+              <div class="maptoggles" role="group" aria-label="Wat wil je op de kaart zien?">
+                <label class="maptoggle"><input type="checkbox" id="mapGebouwen" checked> Gebouwen (FCAB)</label>
+                <label class="maptoggle"><input type="checkbox" id="mapWater" checked> Water op straat</label>
+              </div>
+              <div class="map" id="map" aria-label="Kaart met gebouwen en waterdiepte rond je adres"></div>
+              <div class="hint maplegends">
+                <p class="maplegend__title">Gebouw: water tegen de gevel</p>
+                <ul class="maplegend maplegend--gebouw" id="legendGebouwen" aria-label="FCAB-klassen"></ul>
+                <p class="maplegend__title">Water op straat</p>
+                <ul class="maplegend" id="legendWater" aria-label="Waterdiepte op straat"></ul>
+                <p>De kaart volgt de bui die je hierboven kiest. Bron: Klimaateffectatlas, 2026 (CC BY 4.0).</p>
+              </div>
+            </div>
       </div>
     </section>
 
     <!-- ───────────── Zakkenadvies ───────────── -->
-    <section class="section section--alt" id="advies" hidden>
+    <section class="section" id="advies" hidden>
       <div class="wrap">
         <div class="section__head">
-          <p class="eyebrow">Zakkenadvies</p>
           <h2>Zoveel zakken heb je nodig</h2>
-          <p class="lede" id="adviceLede">We rekenen met de waterhoogte uit het gekozen scenario. Pas de openingen aan zodat het klopt met jouw huis.</p>
+          <p class="lede" id="adviceLede">We rekenen met de waterhoogte tegen je gevel bij de gekozen bui. Pas de openingen aan zodat het klopt met jouw huis.</p>
         </div>
-
         <div class="notice notice--danger" id="deepNotice" hidden>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9.500 17H2.500z"/><path d="M12 10v5M12 17.600v.400"/></svg>
           <div>
@@ -194,6 +138,87 @@
 
         <div class="advice">
           <div class="advice__config">
+            <figure class="scene" id="scene">
+              <svg viewBox="0 0 560 400" role="img" aria-labelledby="sceneTitle" preserveAspectRatio="xMidYMax slice">
+                <title id="sceneTitle">Doorsnede van een voordeur: buiten staat water, zakken voor de deur houden het tegen.</title>
+                <defs>
+                  <clipPath id="clipOut"><rect x="0" y="0" width="341" height="330"/></clipPath>
+                  <clipPath id="clipIn"><rect x="347" y="60" width="213" height="270"/></clipPath>
+                </defs>
+
+                <!-- binnen -->
+                <rect class="sc-inside" x="347" y="60" width="213" height="270"/>
+                <g class="sc-deco">
+                  <path d="M452 60v40"/>
+                  <path class="sc-deco__fill" d="M432 118a20 20 0 0 1 40 0z"/>
+                  <rect x="474" y="284" width="64" height="46" rx="4"/>
+                  <path d="M474 304h64"/>
+                  <path class="sc-deco__fill" d="M497 284v-10h18v10z"/>
+                  <path d="M506 274c-2-16-14-20-18-30M506 274c0-18 6-28 4-42M506 274c4-14 16-16 20-26"/>
+                  <rect class="sc-deco__fill" x="366" y="326" width="52" height="4" rx="2"/>
+                </g>
+                <text class="sc-tag" x="372" y="86">binnen</text>
+                <text class="sc-tag" x="40" y="26">buiten</text>
+
+                <!-- meetlat -->
+                <g class="sc-ruler">
+                  <path d="M22 42V330"/>
+                  <path d="M22 318h5M22 306h5M22 294h5M22 282h5M22 258h5M22 246h5M22 234h5M22 222h5M22 198h5M22 186h5M22 174h5M22 162h5M22 138h5M22 126h5M22 114h5M22 102h5M22 78h5M22 66h5M22 54h5"/>
+                  <path class="sc-ruler__major" d="M22 270h10M22 210h10M22 150h10M22 90h10"/>
+                  <text x="36" y="273.500">50</text>
+                  <text x="36" y="213.500">100</text>
+                  <text x="36" y="153.500">150</text>
+                  <text x="36" y="93.500">200 cm</text>
+                </g>
+
+                <!-- fiets, voor de schaal -->
+                <g class="sc-bike">
+                  <circle cx="160" cy="296" r="34"/>
+                  <circle cx="250" cy="296" r="34"/>
+                  <path d="M160 296l28-48h51l11 48M188 248l13 48h-41M201 296l38-48M239 248l-4-14h12M180 248h18"/>
+                </g>
+
+                <!-- water buiten -->
+                <g clip-path="url(#clipOut)">
+                  <g class="sc-level" id="scLevelOut">
+                    <rect class="sc-water" x="0" y="330" width="341" height="420"/>
+                    <g transform="translate(0 330)">
+                      <g class="sc-wave">
+                        <g class="sc-wave__amp">
+                          <path class="sc-water" d="M-60 0q15-5 30 0t30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0V8H-60z"/>
+                          <path class="sc-waterline" d="M-60 0q15-5 30 0t30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0"/>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+
+                <!-- water binnen (alleen als de stapel te laag is) -->
+                <g clip-path="url(#clipIn)" class="sc-flood" id="scFlood">
+                  <g class="sc-level" id="scLevelIn">
+                    <rect class="sc-water" x="347" y="330" width="213" height="420"/>
+                    <path class="sc-waterline" d="M347 330h213"/>
+                  </g>
+                </g>
+
+                <!-- grond, muur, deur -->
+                <rect class="sc-ground" x="0" y="330" width="560" height="70"/>
+                <path class="sc-groundline" d="M0 330h560"/>
+                <path class="sc-wall" d="M334 20h226v40H360v18h-26z"/>
+                <rect class="sc-door" x="341" y="78" width="6" height="252" rx="1"/>
+                <rect class="sc-door" x="335" y="202" width="6" height="3" rx="1.500"/>
+
+                <!-- zakken (door JS getekend) -->
+                <g id="scBags"></g>
+
+                <!-- waterstand-label -->
+                <g class="sc-level" id="scLevelLabel">
+                  <path class="sc-mark" d="M14 330h18"/>
+                  <text class="sc-depth" id="scDepth" x="66" y="318">12 cm</text>
+                </g>
+              </svg>
+              <figcaption class="scene__cap" id="sceneCap">Voorbeeld: 12 cm water buiten, binnen blijft het droog.</figcaption>
+            </figure>
             <div class="card">
               <div class="card__head">
                 <h3>Waterhoogte</h3>
@@ -213,14 +238,6 @@
               <div class="add" id="addOpening"></div>
             </div>
 
-            <div class="card card--map" id="mapCard" hidden>
-              <div class="card__head">
-                <h3>Je adres op de kaart</h3>
-                <span class="pill pill--quiet" id="mapScenario"></span>
-              </div>
-              <div class="map" id="map" aria-label="Kaart met overstromingsdiepte rond je adres"></div>
-              <p class="hint">Blauw is water in het gekozen scenario. Hoe donkerder, hoe dieper. Bron: LIWO, Rijkswaterstaat.</p>
-            </div>
           </div>
 
           <aside class="summary" aria-live="polite">
@@ -251,78 +268,57 @@
     <section class="section" id="waarom">
       <div class="wrap">
         <div class="section__head">
-          <p class="eyebrow">Waarom Waterwal</p>
           <h2>Twintig zandzakken passen niet in je gangkast. Deze wel.</h2>
           <p class="lede">Bescherming tegen water faalt zelden op het moment zelf. Het faalt maanden eerder, omdat niemand een pallet zand in huis wil hebben. Waterwal ligt plat op een plank tot je het nodig hebt.</p>
         </div>
-
         <div class="versus">
-          <article class="versus__card reveal">
-            <div class="versus__art" aria-hidden="true">
-              <svg viewBox="0 0 320 170">
-                <g class="v-sand">
-                  <rect x="22" y="132" width="62" height="22" rx="11"/><rect x="90" y="132" width="62" height="22" rx="11"/><rect x="158" y="132" width="62" height="22" rx="11"/><rect x="226" y="132" width="62" height="22" rx="11"/>
-                  <rect x="22" y="106" width="62" height="22" rx="11"/><rect x="90" y="106" width="62" height="22" rx="11"/><rect x="158" y="106" width="62" height="22" rx="11"/><rect x="226" y="106" width="62" height="22" rx="11"/>
-                  <rect x="22" y="80" width="62" height="22" rx="11"/><rect x="90" y="80" width="62" height="22" rx="11"/><rect x="158" y="80" width="62" height="22" rx="11"/><rect x="226" y="80" width="62" height="22" rx="11"/>
-                  <rect x="22" y="54" width="62" height="22" rx="11"/><rect x="90" y="54" width="62" height="22" rx="11"/><rect x="158" y="54" width="62" height="22" rx="11"/><rect x="226" y="54" width="62" height="22" rx="11"/>
-                  <rect x="22" y="28" width="62" height="22" rx="11"/><rect x="90" y="28" width="62" height="22" rx="11"/><rect x="158" y="28" width="62" height="22" rx="11"/><rect x="226" y="28" width="62" height="22" rx="11"/>
-                </g>
-                <path class="v-floor" d="M8 158h304"/>
-              </svg>
-            </div>
-            <h3>20 zandzakken</h3>
-            <ul class="list list--minus">
-              <li>Ongeveer 300 kilo zand, het hele jaar in de weg</li>
-              <li>Vullen kost tijd, een schep en een tweede paar handen</li>
-              <li>Het zand moet er zijn vóór het water er is</li>
-            </ul>
-          </article>
-
-          <article class="versus__card versus__card--us reveal">
-            <div class="versus__art" aria-hidden="true">
-              <svg viewBox="0 0 320 170">
-                <g class="v-pack">
-                  <rect x="96" y="134" width="128" height="20" rx="5"/>
-                  <path d="M104 139h112M104 144h112M104 149h112"/>
-                </g>
-                <path class="v-floor" d="M8 158h304"/>
-              </svg>
-            </div>
-            <h3>20 Waterwal-zakken</h3>
-            <ul class="list list--plus">
-              <li>Eén plat vacuümpak, past op een plank of onder het bed</li>
-              <li>Geen zand en geen schep: water doet het werk</li>
-              <li>In 3 tot 4 minuten opgezwollen tot een dam</li>
-            </ul>
-          </article>
+          <figure class="versus__item reveal">
+            <img src="assets/img/zandzakken.webp" width="1100" height="821" loading="lazy" alt="Een pallet vol zandzakken in een schuur, met zand op de vloer ernaast">
+            <figcaption>
+              <h3>20 zandzakken</h3>
+              <ul class="list list--minus">
+                <li>Ongeveer 300 kilo zand, het hele jaar in de weg</li>
+                <li>Vullen kost tijd, een schep en een tweede paar handen</li>
+                <li>Het zand moet er zijn vóór het water er is</li>
+              </ul>
+            </figcaption>
+          </figure>
+          <figure class="versus__item versus__item--us reveal">
+            <img src="assets/img/gangkast.webp" width="1100" height="821" loading="lazy" alt="Een opgeruimde gangkast met het platte vacuümpak Waterwal-zakken op de plank">
+            <figcaption>
+              <h3>20 Waterwal-zakken</h3>
+              <ul class="list list--plus">
+                <li>Eén plat vacuümpak, past op een plank of onder het bed</li>
+                <li>Geen zand en geen schep: water doet het werk</li>
+                <li>In 3 tot 4 minuten opgezwollen tot een dam</li>
+              </ul>
+            </figcaption>
+          </figure>
         </div>
+        <p class="fineprint versus__note">Sfeerbeelden, gemaakt met AI.</p>
       </div>
     </section>
 
     <!-- ───────────── Zo werkt het ───────────── -->
-    <section class="section section--alt" id="zo-werkt-het">
+    <section class="section section--dark" id="zo-werkt-het">
       <div class="wrap">
         <div class="section__head">
-          <p class="eyebrow">Zo werkt het</p>
           <h2>Van plank tot dam in drie stappen</h2>
         </div>
         <ol class="steps">
           <li class="step reveal">
-            <span class="step__n">1</span>
-            <svg class="step__art" viewBox="0 0 120 80" aria-hidden="true"><path d="M14 18h92M14 62h92M22 18v44M98 18v44"/><rect class="fill" x="34" y="50" width="52" height="10" rx="3"/><path d="M40 55h40"/></svg>
-            <h3>Bewaar ze plat</h3>
+            <svg class="step__art" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="18" width="36" height="12" rx="3"/><path d="M10 24h28"/></svg>
+            <h3>1. Bewaar ze plat</h3>
             <p>De zakken zitten vacuüm verpakt en nemen bijna geen ruimte in. Leg ze in de gangkast, de schuur of de meterkast.</p>
           </li>
           <li class="step reveal">
-            <span class="step__n">2</span>
-            <svg class="step__art" viewBox="0 0 120 80" aria-hidden="true"><rect class="fill" x="26" y="52" width="68" height="10" rx="4"/><path d="M48 14c-5 8-8 12-8 16a8 8 0 0 0 16 0c0-4-3-8-8-16zM76 22c-4 6-6 9-6 12a6 6 0 0 0 12 0c0-3-2-6-6-12z"/></svg>
-            <h3>Leg ze neer en maak ze nat</h3>
+            <svg class="step__art" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6c6 9 11 15 11 21a11 11 0 0 1-22 0c0-6 5-12 11-21z"/></svg>
+            <h3>2. Leg ze neer en maak ze nat</h3>
             <p>Leg de zakken voor de deur en giet er water over, of laat het opkomende water het werk doen. Ze werken met zoet water: regen, kraan of rivier.</p>
           </li>
           <li class="step reveal">
-            <span class="step__n">3</span>
-            <svg class="step__art" viewBox="0 0 120 80" aria-hidden="true"><rect class="fill" x="46" y="46" width="44" height="16" rx="8"/><rect class="fill" x="52" y="28" width="44" height="16" rx="8"/><path d="M96 14v48M8 40q6-5 12 0t12 0 12 0M8 62h104"/></svg>
-            <h3>Na 3 tot 4 minuten staat er een dam</h3>
+            <svg class="step__art" viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="28" width="18" height="10" rx="4"/><rect x="25" y="28" width="18" height="10" rx="4"/><rect x="15" y="17" width="18" height="10" rx="4"/></svg>
+            <h3>3. Na 3 tot 4 minuten een dam</h3>
             <p>De korrels in de zak nemen het water op en zwellen op. Stapel de zakken in verband, zoals bakstenen, en het water blijft buiten.</p>
           </li>
         </ol>
@@ -331,44 +327,28 @@
 
     <!-- ───────────── De zakken ───────────── -->
     <section class="section" id="zakken">
-      <div class="wrap">
-        <div class="section__head">
-          <p class="eyebrow">De zakken</p>
+      <div class="wrap bags">
+        <figure class="bags__img reveal">
+          <img src="assets/img/zakken-pak.webp" width="1400" height="1045" loading="lazy" alt="Een plat zwart vacuümpak naast een opgezwollen zwarte zak met handvatten en een witte zak zonder handvatten">
+          <figcaption class="fineprint">Productbeeld gemaakt met AI; het echte product kan afwijken.</figcaption>
+        </figure>
+        <div class="bags__body">
           <h2>Twee uitvoeringen, één prijs</h2>
+          <p class="bags__price"><strong>€ 10</strong> per zak</p>
           <p class="lede">Beide zakken zijn gevuld met dezelfde waterabsorberende korrels. Het verschil zit in de handvatten.</p>
+          <div class="bags__types">
+            <p><i class="dot dot--zwart" aria-hidden="true"></i><span><strong>Zwart, met handvatten.</strong> Een volgezogen zak is zwaar. Met de handvatten til en verleg je hem makkelijker, en zwart valt minder op voor de deur.</span></p>
+            <p><i class="dot dot--wit" aria-hidden="true"></i><span><strong>Wit, zonder handvatten.</strong> Dezelfde zak, prima als je hem droog neerlegt op de plek waar hij moet blijven liggen.</span></p>
+          </div>
+          <dl class="specs">
+            <div><dt>Buitenkant</dt><dd>Niet-geweven stof</dd></div>
+            <div><dt>Vulling</dt><dd>Superabsorberend polymeer (natriumpolyacrylaat)</dd></div>
+            <div><dt>Zweltijd</dt><dd>3 tot 4 minuten in zoet water</dd></div>
+            <div><dt>Veiligheid</dt><dd>Stof en vulling zijn niet giftig</dd></div>
+            <div><dt>Verpakking</dt><dd>Vacuüm, plat op te bergen</dd></div>
+            <div><dt>Gebruik</dt><dd>Eenmalig</dd></div>
+          </dl>
         </div>
-        <div class="products">
-          <article class="product reveal">
-            <div class="product__img"><img src="assets/img/zak-zwart.webp" width="3000" height="2094" loading="lazy" alt="Zwarte Waterwal-zakken, plat en vacuüm verpakt"></div>
-            <div class="product__body">
-              <div class="product__top">
-                <h3>Zwart, met handvatten</h3>
-                <p class="price"><strong>€ 10</strong> per zak</p>
-              </div>
-              <p>Een volgezogen zak is zwaar. Met de handvatten til en verleg je hem makkelijker. Zwart valt ook minder op voor de deur.</p>
-              <ul class="tags"><li>Handvatten</li><li>Zoet water</li><li>Eenmalig gebruik</li></ul>
-            </div>
-          </article>
-          <article class="product reveal">
-            <div class="product__img"><img src="assets/img/zak-wit.webp" width="3000" height="2001" loading="lazy" alt="Witte Waterwal-zakken, plat en vacuüm verpakt"></div>
-            <div class="product__body">
-              <div class="product__top">
-                <h3>Wit, zonder handvatten</h3>
-                <p class="price"><strong>€ 10</strong> per zak</p>
-              </div>
-              <p>Dezelfde zak, zonder handvatten. Prima als je de zakken droog neerlegt op de plek waar ze moeten blijven liggen.</p>
-              <ul class="tags"><li>Zoet water</li><li>Eenmalig gebruik</li></ul>
-            </div>
-          </article>
-        </div>
-        <dl class="specs reveal">
-          <div><dt>Buitenkant</dt><dd>Niet-geweven stof</dd></div>
-          <div><dt>Vulling</dt><dd>Superabsorberend polymeer (natriumpolyacrylaat)</dd></div>
-          <div><dt>Zweltijd</dt><dd>3 tot 4 minuten in zoet water</dd></div>
-          <div><dt>Veiligheid</dt><dd>Stof en vulling zijn niet giftig</dd></div>
-          <div><dt>Verpakking</dt><dd>Vacuüm, plat op te bergen</dd></div>
-          <div><dt>Gebruik</dt><dd>Eenmalig</dd></div>
-        </dl>
       </div>
     </section>
 
@@ -376,7 +356,6 @@
     <section class="section section--alt" id="vragen">
       <div class="wrap wrap--narrow">
         <div class="section__head">
-          <p class="eyebrow">Vragen</p>
           <h2>Eerlijke antwoorden</h2>
         </div>
         <div class="faq">
@@ -394,11 +373,15 @@
           </details>
           <details>
             <summary>Hoe betrouwbaar is de kaart?</summary>
-            <p>De waterdieptes komen uit het Landelijk Informatiesysteem Water en Overstromingen (LIWO) van Rijkswaterstaat. Dat is dezelfde bron als overstroomik.nl. Het zijn berekende scenario's: ze laten zien wat er kán gebeuren bij een doorbraak of hoogwater, niet wat er zeker gebeurt. Wateroverlast door een hevige bui staat er niet in.</p>
+            <p>Alles komt uit de Klimaateffectatlas: landelijke berekeningen van waar regenwater blijft staan bij een wolkbreuk van 70 mm en van 90 mm in een uur, op een raster van 50 bij 50 cm. Voor de bui van 70 mm gebruiken we de officiële FCAB-omgevingsscore per gebouw. Voor de bui van 90 mm bestaat die score niet; die rekenen we zelf op dezelfde manier uit (het diepste water vlak langs de gevel). Het zijn berekeningen: ze laten zien wat er kán gebeuren, niet wat er zeker gebeurt. Een drempel, kelderingang of verhoogde stoep zit er niet in.</p>
           </details>
           <details>
-            <summary>Mijn adres is droog op de kaart. Heb ik dan niets nodig?</summary>
-            <p>De kaart gaat over rivieren, meren en zee. Een straat die volloopt bij een wolkbreuk zie je er niet op terug. Staat er bij jou weleens water tegen de drempel na een zware bui, dan zijn een paar zakken in de kast een goedkope verzekering.</p>
+            <summary>Wat betekent het als mijn gebouw rood kleurt?</summary>
+            <p>De kleur is de FCAB-klasse: hoe hoog het water bij die bui tegen je gevel komt. Wit is minder dan 2 cm, lichtroze 2 tot 10 cm, en vanaf 10 cm kleurt een gebouw rood, tot donkerrood bij meer dan 30 cm. Rood betekent dat het water bij een deur of kelderraam naar binnen kan lopen als de drempel laag is.</p>
+          </details>
+          <details>
+            <summary>Mijn gebouw is wit. Heb ik dan niets nodig?</summary>
+            <p>Bij deze buien blijft er volgens de berekening weinig water tegen je gevel staan. Dat zegt niets over rivieren, meren of zee; kijk daarvoor op overstroomik.nl. Staat er bij jou weleens water tegen de drempel na een zware bui, dan zijn een paar zakken in de kast een goedkope verzekering.</p>
           </details>
           <details>
             <summary>Wat doe ik met de zakken na gebruik?</summary>
@@ -414,14 +397,12 @@
 
     <!-- ───────────── Wachtlijst ───────────── -->
     <section class="section band" id="wachtlijst">
-      <svg class="band__wave" viewBox="0 0 1440 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 22q60-22 120 0t120 0 120 0 120 0 120 0 120 0 120 0 120 0 120 0 120 0 120 0 120 0"/></svg>
-      <div class="wrap wrap--narrow">
+      <div class="wrap band__grid">
         <div class="section__head">
-          <p class="eyebrow">Wachtlijst</p>
           <h2>Als eerste weten wanneer Waterwal te koop is?</h2>
           <p class="lede">We zijn nog niet open. Laat je e-mailadres achter en we mailen je zodra de verkoop start.</p>
         </div>
-
+        <div>
         <form class="waitlist" id="waitForm" novalidate>
           <p class="waitlist__advice" id="waitAdvice" hidden>
             <label class="checkbox">
@@ -452,6 +433,7 @@
           <h3 id="waitDoneTitle">Je staat erop.</h3>
           <p id="waitDoneText">We mailen je zodra de verkoop start.</p>
         </div>
+        </div>
       </div>
     </section>
   </main>
@@ -466,7 +448,7 @@
         <p><a href="privacy.html">Privacyverklaring</a></p>
         <p><a href="#check">Check je adres</a></p>
       </div>
-      <p class="site-footer__src">Overstromingsdata: LIWO, Rijkswaterstaat. Adressen en kaart: PDOK en Kadaster. De uitkomst is een indicatie, geen garantie.</p>
+      <p class="site-footer__src">Waterdiepte en FCAB-omgevingsscore: Klimaateffectatlas, 2026 (CC BY 4.0). Adressen, gebouwen en kaart: PDOK en Kadaster (BAG). De uitkomst is een indicatie, geen garantie. Foto's op deze pagina zijn gemaakt met AI.</p>
     </div>
   </footer>
 

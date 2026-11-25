@@ -53,8 +53,9 @@
     address: null,
     postcode: null,
     coords: null,
-    risk: null,          // { k1: 0.43 | null, ... }
-    zones: [],
+    risk: null,          // { r70: 0.23 | null, r90: ... } waterdiepte tegen de gevel in meter
+    klasse: null,        // { r70: 1..7, r90: 1..7 } FCAB-klasse (zie config KLASSEN)
+    fcabOfficial: false, // true = klasse bij 70 mm komt uit de FCAB-kaart zelf
     scenario: null,
     custom: false,       // true = bezoeker heeft zelf aan de schuif gezeten
     tooDeep: false,
@@ -63,6 +64,7 @@
     openings: [{ type: 'voordeur', w: 90 }],
     color: 'zwart',
   };
+
 
   /* ───────── 2. rekenregel ───────── */
   function layersFor(cm) {
@@ -211,7 +213,7 @@
     return m ? { lon: parseFloat(m[1]), lat: parseFloat(m[2]) } : null;
   }
   function geocode() {
-    var fl = '&fl=id,weergavenaam,centroide_ll,postcode,type';
+    var fl = '&fl=id,weergavenaam,centroide_ll,postcode,type,adresseerbaarobject_id,gemeentecode';
     var url = chosen
       ? C.PDOK_SEARCH + '/lookup?id=' + encodeURIComponent(chosen.id) + fl
       : C.PDOK_SEARCH + '/free?q=' + encodeURIComponent(input.value.trim()) + '&fq=type:(adres OR postcode OR weg)&rows=1' + fl;
@@ -219,9 +221,33 @@
       var doc = data.response && data.response.docs && data.response.docs[0];
       var pt = doc && parsePoint(doc.centroide_ll);
       if (!pt) { var e = new Error('notfound'); e.notFound = true; throw e; }
-      return { name: doc.weergavenaam, postcode: doc.postcode || null, coords: pt };
+      return { name: doc.weergavenaam, postcode: doc.postcode || null, coords: pt,
+               vbo: doc.type === 'adres' ? doc.adresseerbaarobject_id || null : null, gemeente: doc.gemeentecode || null };
     });
   }
+
+  // Adresdata: per postcodegebied één .js-bestand dat WATERWAL_ADRES(pc4, {...}) aanroept.
+  // Een <script> (geen fetch) zodat het ook werkt als index.html direct van schijf wordt geopend.
+  var shards = {};
+  window.WATERWAL_ADRES = function (pc4, recs) {
+    if (shards[pc4] && shards[pc4].resolve) shards[pc4].resolve(recs);
+  };
+  function loadShard(pc4) {
+    if (shards[pc4]) return shards[pc4].promise;
+    var entry = {};
+    entry.promise = new Promise(function (resolve, reject) {
+      entry.resolve = resolve;
+      var s = el('script', { src: C.ADRES_URL.replace('{pc4}', pc4) });
+      s.onerror = function () {
+        delete shards[pc4];
+        var e = new Error('nodata'); e.noData = true; reject(e);
+      };
+      document.head.appendChild(s);
+    });
+    shards[pc4] = entry;
+    return entry.promise;
+  }
+  function fail(flag) { var e = new Error(flag); e[flag] = true; return e; }
 
   var checking = false;
   function runCheck() {
@@ -230,46 +256,57 @@
     if (q.length < 3) { setMsg('Vul eerst je adres in, bijvoorbeeld postcode en huisnummer.', true); input.focus(); return; }
     checking = true;
     btn.classList.add('is-loading'); btn.disabled = true;
-    setMsg('We zoeken je adres op de overstromingskaart…');
+    setMsg('We zoeken je gebouw op…');
 
     geocode().then(function (place) {
+      if (!place.vbo || !place.postcode) throw fail('noAddr');
       state.address = place.name; state.postcode = place.postcode; state.coords = place.coords;
       input.value = place.name;
       showResultLoading();
-      return fetchJSON(C.WORKER_URL + '/risk?lat=' + place.coords.lat.toFixed(5) + '&lon=' + place.coords.lon.toFixed(5), null, 20000);
-    }).then(function (data) {
-      var risk = {};
-      (data.scenarios || []).forEach(function (s) { risk[s.id] = (typeof s.depth_m === 'number' && s.depth_m > 0.004) ? s.depth_m : null; });
-      state.risk = risk; state.zones = data.zones || [];
-      state.chance = data.chance || null;
-      state.riskLevel = riskLevelOf(data.chance, risk);
+      return loadShard(place.postcode.slice(0, 4)).then(function (recs) {
+        var rec = recs[String(place.vbo)];
+        if (!rec) throw fail('noData');
+        return rec;
+      });
+    }).then(function (rec) {
+      // "k70,k90,d70,d90,f": FCAB-klasse per bui, waterdiepte tegen de gevel (cm), f = officieel FCAB
+      var p = rec.split(',').map(Number);
+      state.klasse = { r70: p[0], r90: p[1] };
+      state.risk = { r70: p[2] >= 2 ? p[2] / 100 : null, r90: p[3] >= 2 ? p[3] / 100 : null };
+      state.fcabOfficial = p[4] === 1;
       state.mode = 'result';
       setMsg('');
       showResult();
     }).catch(function (err) {
-      $('#result').hidden = true;
-      if (err && err.notFound) setMsg('We vinden dit adres niet. Probeer postcode en huisnummer, bijvoorbeeld 3062 DA 15.', true);
-      else if (err && err.status === 400) setMsg('Dit adres ligt buiten Nederland. De kaart werkt alleen voor Nederlandse adressen.', true);
-      else setMsg('De overstromingskaart is nu even niet bereikbaar. Probeer het zo opnieuw, of kies hieronder zelf een waterhoogte.', true);
+      resultEl.hidden = true;
+      $('#uitkomst').hidden = true;
+      if (err && err.notFound) setMsg('We vinden dit adres niet. Probeer postcode en huisnummer, bijvoorbeeld 3512 JE 29.', true);
+      else if (err && err.noAddr) setMsg('Kies een adres met huisnummer, dan zoeken we je gebouw op.', true);
+      else if (err && err.noData) setMsg('Voor dit adres hebben we nog geen gegevens. De check werkt nu alleen in ' + C.AREA_NAME + '. Je kunt wel zelf een waterhoogte kiezen.', true);
+      else setMsg('Adressen zoeken lukt nu even niet. Probeer het zo opnieuw, of kies zelf een waterhoogte.', true);
     }).then(function () {
       checking = false;
       btn.classList.remove('is-loading'); btn.disabled = false;
     });
   }
 
-  /* ───────── 5. resultaat en scenario's ───────── */
+  /* ───────── 5. resultaat en buien ───────── */
   var resultEl = $('#result');
   var chipsEl = $('#chips');
 
   function levelOf(d) { return d == null ? 'droog' : d < 0.2 ? 'laag' : d <= MAX_HOLD_CM / 100 ? 'midden' : 'hoog'; }
+  function klasseOf(id) { return C.KLASSEN[(state.klasse && state.klasse[id]) || 1]; }
 
   function renderChips() {
     while (chipsEl.firstChild) chipsEl.removeChild(chipsEl.firstChild);
     C.SCENARIOS.forEach(function (s) {
       var d = state.risk ? state.risk[s.id] : null;
       var b = el('button', { type: 'button', class: 'chip', role: 'radio', 'data-id': s.id, 'data-level': levelOf(d), 'aria-checked': s.id === state.scenario ? 'true' : 'false', tabindex: s.id === state.scenario ? '0' : '-1' });
-      b.appendChild(el('i', { class: 'chip__dot', 'aria-hidden': 'true' }));
+      var dot = el('i', { class: 'chip__dot chip__dot--fcab', 'aria-hidden': 'true' });
+      if (state.klasse) dot.style.background = klasseOf(s.id).color;
+      b.appendChild(dot);
       var name = el('span', { class: 'chip__name' }, s.name);
+      name.appendChild(el('small', null, s.freq));
       b.appendChild(name);
       b.appendChild(el('span', { class: 'chip__depth' }, d == null ? 'droog' : fmtDepth(d)));
       b.addEventListener('click', function () { selectScenario(s.id, true); });
@@ -289,78 +326,54 @@
   function showResultLoading() {
     $('#resAddr').textContent = state.address;
     $('#resPre').textContent = ''; $('#resValue').textContent = '00 cm'; $('#resPost').textContent = '';
-    $('#resSub').textContent = 'We zoeken je adres op de overstromingskaart…';
-    state.risk = null; state.scenario = null;
+    $('#resSub').textContent = 'We zoeken je gebouw op…';
+    state.risk = null; state.klasse = null; state.scenario = null;
     $('#resRisk').hidden = true;
     renderChips();
     resultEl.hidden = false;
+    $('#uitkomst').hidden = false;
     resultEl.classList.add('is-loading');
   }
 
-  // Oordeel per adres: eerst de officiële kanskaart, anders het eerste natte scenario.
-  function riskLevelOf(chance, risk) {
-    // De kanskaart dekt niet alles (o.a. regionale wateren); is hij leeg, dan de scenario's.
-    if (chance && chance.wet) return C.RISK_BY_CLASS[chance.wet] || 'minimaal';
-    var ids = ['k1', 'k2', 'k3', 'k4', 'k5'];
-    for (var i = 0; i < ids.length; i++) if (risk[ids[i]] != null) return C.RISK_BY_FIRST_WET[ids[i]];
-    return 'geen';
-  }
-
-  // Kunnen zakken hier helpen? Water moet komen, maar onder B.helpLimitCm blijven.
-  // Eerst de scenario's (exacte cm), anders de kanskaart (drempels 20 en 50 cm).
-  var CLASS_NAME = { 5: 'grote kans', 4: 'middelgrote kans', 3: 'kleine kans', 2: 'zeer kleine kans', 1: 'extreem kleine kans' };
-  var RAIN_TEXT = 'Met zakken houd je water tot ongeveer ' + B.helpLimitCm + ' cm buiten, bijvoorbeeld bij hevige regen of een ondergelopen straat.';
-  function fitOf(risk, chance) {
-    var lim = B.helpLimitCm;
-    var wet = C.SCENARIOS.filter(function (s) { return risk[s.id] != null; });
-    var ok = wet.filter(function (s) { return risk[s.id] * 100 <= lim; });
-    if (ok.length) {
-      var s = ok[0], deeper = wet.some(function (w) { return risk[w.id] * 100 > lim; });
-      return { fit: deeper ? 'deels' : 'ja', text: 'Zakken kunnen helpen: bij een overstroming met een ' + s.name.toLowerCase() +
-        ' komt het water hier tot ' + fmtDepth(risk[s.id]) + '.' };
-    }
-    if (wet.length) return { fit: 'ja', text: RAIN_TEXT };
-    // Scenario's droog: kijk naar de kanskaart (geen exacte cm, alleen drempels).
-    if (chance && chance.wet) {
-      if (!chance.over50 || chance.over50 < chance.wet) return { fit: 'ja', text: 'Zakken kunnen helpen: er is een ' + CLASS_NAME[chance.wet] +
-        ' dat hier water komt, en die kans is kleiner dat het boven 50 cm komt.' };
-      return { fit: 'ja', text: RAIN_TEXT };
-    }
-    return null;
-  }
-
-  function renderRisk() {
-    var r = C.RISK[state.riskLevel] || C.RISK.geen;
+  // Oordeel voor het gekozen gebouw en de gekozen bui, in de FCAB-kleur van de kaart.
+  var COLOR_WORD = { 1: 'grijs', 2: 'wit', 3: 'lichtroze', 4: 'roze', 5: 'rood', 6: 'donkerrood', 7: 'donkerrood' };
+  function renderVerdict() {
+    var sc = scenarioById(state.scenario);
+    var k = state.klasse[sc.id] || 1;
+    var K = C.KLASSEN[k];
+    var d = state.risk[sc.id];
     var box = $('#resRisk');
-    box.setAttribute('data-level', state.riskLevel);
-    $('#resRiskLabel').textContent = r.label;
-    $('#resRiskText').textContent = r.text;
-    var f = fitOf(state.risk, state.chance);
-    $('#resFit').hidden = !f;
-    if (f) { $('#resFit').setAttribute('data-fit', f.fit); $('#resFitText').textContent = f.text; }
+    box.setAttribute('data-level', K.level);
+    $('#resRiskDot').style.background = K.color;
+    var label;
+    if (k === 1) label = 'Geen gegevens voor je gebouw';
+    else if (k === 2) label = 'Geen hinderlijk water tegen je gebouw';
+    else label = K.name + ': ' + K.range + ' water tegen je gebouw';
+    $('#resRiskLabel').textContent = label;
+    var bron = sc.id === 'r70' && !state.fcabOfficial
+      ? 'berekend volgens de FCAB-methode (dit gebouw staat niet in de FCAB-kaart)' : sc.bron;
+    $('#resRiskText').textContent = k === 1
+      ? 'Voor dit gebouw is geen waterdiepte bekend.'
+      : 'Bij ' + sc.when + ' (' + sc.freq + '). Op de kaart kleurt je gebouw ' + COLOR_WORD[k] + '. Bron: ' + bron + '.';
+    var fit = null;
+    if (d != null && d * 100 <= B.helpLimitCm) fit = { f: 'ja', t: 'Zakken kunnen helpen: water van ' + fmtDepth(d) + ' houd je met een stapel zakken voor de deur buiten.' };
+    else if (d != null) fit = { f: 'nee', t: 'Zo hoog keren zakken het water niet meer volledig. Lees het advies hieronder.' };
+    $('#resFit').hidden = !fit;
+    if (fit) { $('#resFit').setAttribute('data-fit', fit.f); $('#resFitText').textContent = fit.t; }
     box.hidden = false;
   }
 
   function showResult() {
     resultEl.classList.remove('is-loading');
     resultEl.hidden = false;
-    renderRisk();
-    // Start bij het meest waarschijnlijke scenario waarin er water staat.
-    var first = C.SCENARIOS.filter(function (s) { return state.risk[s.id] != null; })[0];
+    state.scenario = C.SCENARIOS[0].id;
     renderChips();
-    selectScenario(first ? first.id : C.SCENARIOS[0].id, false);
-
-    var zoneEl = $('#resZone');
-    var texts = [];
-    state.zones.forEach(function (z) { if (z.code && C.ZONES[z.code] && texts.indexOf(C.ZONES[z.code]) < 0) texts.push(C.ZONES[z.code]); });
-    zoneEl.hidden = texts.length === 0;
-    zoneEl.textContent = texts.join(' ');
-
+    selectScenario(state.scenario, false);
     $('#advies').hidden = false;
     renderOpenings();
     renderAdvice();
     initMap();
-    if (window.matchMedia('(max-width: 900px)').matches) sceneEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('#uitkomst').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function selectScenario(id, fromUser) {
@@ -376,6 +389,7 @@
       c.setAttribute('aria-checked', on ? 'true' : 'false');
       c.setAttribute('tabindex', on ? '0' : '-1');
     });
+    renderVerdict();
     renderHeadline();
     renderScene();
     if (!$('#advies').hidden) renderAdvice();
@@ -385,17 +399,13 @@
   function renderHeadline() {
     var sc = scenarioById(state.scenario);
     var d = state.risk[state.scenario];
-    var allDry = C.SCENARIOS.every(function (s) { return state.risk[s.id] == null; });
-    var when = 'bij een overstroming met een ' + sc.name.toLowerCase() + '.';
     $('#resAddr').textContent = state.address;
     if (d == null) {
       $('#resPre').textContent = ''; $('#resValue').textContent = 'Droog'; $('#resPost').textContent = '';
-      $('#resSub').textContent = allDry
-        ? 'In alle scenario\'s van Rijkswaterstaat blijft je adres droog. Een hevige bui kan nog wel voor wateroverlast zorgen.'
-        : 'Je adres blijft droog ' + when;
+      $('#resSub').textContent = 'Bij ' + sc.when + ' staat er geen hinderlijk water tegen je gevel.';
     } else {
       $('#resPre').textContent = 'Tot'; $('#resValue').textContent = fmtDepth(d); $('#resPost').textContent = 'water';
-      $('#resSub').textContent = when.charAt(0).toUpperCase() + when.slice(1);
+      $('#resSub').textContent = 'Tegen je gevel bij ' + sc.when + ', ' + sc.freq + '.';
     }
   }
 
@@ -509,8 +519,8 @@
     var hint;
     if (state.custom || !sc) hint = 'Eigen waterhoogte. Zakken keren water tot ongeveer ' + MAX_HOLD_CM + ' cm.';
     else if (state.tooDeep) hint = 'We rekenen met ' + B.rainDefaultCm + ' cm: een waterhoogte waarbij zakken wél helpen. Schuif om aan te passen.';
-    else if (d == null) hint = 'Dit scenario is droog op jouw adres. We rekenen met één laag als basis, bijvoorbeeld voor een hevige bui.';
-    else hint = 'Uit het scenario "' + sc.name + '" op jouw adres. Schuif om met een andere hoogte te rekenen.';
+    else if (d == null) hint = 'Bij deze bui blijft het droog tegen je gevel. Schuif als je toch met water wilt rekenen.';
+    else hint = 'Waterdiepte tegen je gevel bij de ' + sc.name.toLowerCase() + '. Schuif om met een andere hoogte te rekenen.';
     $('#depthHint').textContent = hint;
 
     // eerlijke melding als het water te hoog komt
@@ -518,7 +528,7 @@
     deep.hidden = !(state.tooDeep && !state.custom);
     if (!deep.hidden) {
       $('#deepTitle').textContent = fmtDepth(d) + ' water houden zakken niet tegen.';
-      $('#deepText').textContent = 'In dit scenario komt het water hoger dan een stapel zakken kan keren (ongeveer ' + MAX_HOLD_CM + ' cm). Zorg dat je naar een droge verdieping kunt en volg de aanwijzingen van je gemeente. Zakken helpen wél bij minder water, zoals bij een hevige bui of een scenario met minder diep water. Daar rekenen we hieronder mee.';
+      $('#deepText').textContent = 'Bij deze bui komt het water tegen je gevel hoger dan een stapel zakken kan keren (ongeveer ' + MAX_HOLD_CM + ' cm). Zorg dat je naar een droge verdieping kunt en volg de aanwijzingen van je gemeente. Zakken helpen wél bij minder water; hieronder rekenen we met ' + B.rainDefaultCm + ' cm.';
     }
 
     // samenvatting
@@ -564,17 +574,25 @@
   });
 
   /* ───────── 7. kaart (Leaflet, pas geladen na een adrescheck) ───────── */
-  var map, wms, pin, leafletPromise;
+  // Lagen per bui: water op straat (blauw) en de panden in FCAB-kleur (rood). Beide zijn eigen
+  // tegels uit de Klimaateffectatlas-data; lege tegels bestaan niet, Leaflet toont daar niets.
+  var map, pin, leafletPromise, waterLayer, gebouwLayer, waterUrl, gebouwUrl;
+  var BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
   function loadLeaflet() {
     if (leafletPromise) return leafletPromise;
     leafletPromise = new Promise(function (resolve, reject) {
       var css = el('link', { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css' });
       document.head.appendChild(css);
       var js = el('script', { src: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js' });
-      js.onload = resolve; js.onerror = reject;
+      js.onload = resolve; js.onerror = function () { leafletPromise = null; reject(); };
       document.head.appendChild(js);
     });
     return leafletPromise;
+  }
+  function dataLayer(url, z, attribution) {
+    var T = C.TILES;
+    return window.L.tileLayer(url, { minZoom: 8, maxZoom: 19, minNativeZoom: T.minNative, maxNativeZoom: T.maxNative,
+      bounds: T.bounds, zIndex: z, errorTileUrl: BLANK, attribution: attribution });
   }
   function initMap() {
     if (!state.coords) return;
@@ -584,14 +602,13 @@
       var ll = [state.coords.lat, state.coords.lon];
       if (!map) {
         var touch = window.matchMedia('(pointer: coarse)').matches;
-        map = L.map('map', { scrollWheelZoom: false, dragging: !touch, zoomControl: true, attributionControl: true }).setView(ll, 14);
+        map = L.map('map', { scrollWheelZoom: false, dragging: !touch, zoomControl: true, attributionControl: true }).setView(ll, 17);
         map.attributionControl.setPrefix(false);
-        L.tileLayer(C.BASEMAP, { minZoom: 8, maxZoom: 18, attribution: 'Kaart: <a href="https://www.pdok.nl" target="_blank" rel="noopener">PDOK / Kadaster</a>' }).addTo(map);
-        wms = L.tileLayer.wms(C.LIWO_WMS, { layers: scenarioById(state.scenario).layer, format: 'image/png', transparent: true, opacity: 0.62, attribution: 'Water: LIWO, Rijkswaterstaat' }).addTo(map);
-        pin = L.marker(ll, { icon: L.divIcon({ className: '', html: '<div class="map__pin"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), keyboard: false }).addTo(map);
+        L.tileLayer(C.BASEMAP, { minZoom: 8, maxZoom: 19, maxNativeZoom: 18, attribution: 'Kaart: <a href="https://www.pdok.nl" target="_blank" rel="noopener">PDOK / Kadaster</a>' }).addTo(map);
+        pin = L.marker(ll, { icon: L.divIcon({ className: '', html: '<div class="map__pin"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), keyboard: false, zIndexOffset: 1000 }).addTo(map);
         if (touch) map.once('click', function () { map.dragging.enable(); });
       } else {
-        map.setView(ll, 14);
+        map.setView(ll, 17);
         pin.setLatLng(ll);
       }
       updateMapLayer();
@@ -599,11 +616,32 @@
     }).catch(function () { $('#mapCard').hidden = true; });
   }
   function updateMapLayer() {
-    var sc = state.scenario && scenarioById(state.scenario);
-    if (!sc) return;
-    $('#mapScenario').textContent = sc.name;
-    if (wms) wms.setParams({ layers: sc.layer });
+    var sc = scenarioById(state.scenario) || C.SCENARIOS[0];
+    $('#mapScenario').textContent = sc.name + ' · ' + sc.freq;
+    if (!map) return;
+    var src = '<a href="https://www.klimaateffectatlas.nl" target="_blank" rel="noopener">Klimaateffectatlas</a>';
+    var wantWater = $('#mapWater').checked, wantGeb = $('#mapGebouwen').checked;
+    if (waterLayer && (waterUrl !== sc.water || !wantWater)) { map.removeLayer(waterLayer); waterLayer = null; }
+    if (gebouwLayer && (gebouwUrl !== sc.gebouwen || !wantGeb)) { map.removeLayer(gebouwLayer); gebouwLayer = null; }
+    if (wantWater && !waterLayer) { waterLayer = dataLayer(sc.water, 2, 'Water: ' + src).setOpacity(0.85).addTo(map); waterUrl = sc.water; }
+    if (wantGeb && !gebouwLayer) { gebouwLayer = dataLayer(sc.gebouwen, 3, 'Gebouwen: FCAB, ' + src).addTo(map); gebouwUrl = sc.gebouwen; }
   }
+  $('#mapWater').addEventListener('change', updateMapLayer);
+  $('#mapGebouwen').addEventListener('change', updateMapLayer);
+  (function buildLegends() {
+    var g = $('#legendGebouwen'), w = $('#legendWater');
+    [2, 3, 4, 5, 6, 7].forEach(function (k) {
+      var K = C.KLASSEN[k], li = el('li');
+      var sw = el('i'); sw.style.background = K.color; li.appendChild(sw);
+      li.appendChild(document.createTextNode(K.range));
+      g.appendChild(li);
+    });
+    C.WATER_LEGEND.forEach(function (x) {
+      var li = el('li'), sw = el('i'); sw.style.background = x.color; li.appendChild(sw);
+      li.appendChild(document.createTextNode(x.label));
+      w.appendChild(li);
+    });
+  })();
 
   /* ───────── 8. wachtlijst ───────── */
   var waitForm = $('#waitForm');

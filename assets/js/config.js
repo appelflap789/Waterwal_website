@@ -1,6 +1,6 @@
 /* Waterwal — instellingen. Alles wat je zonder programmeren wilt aanpassen staat hier. */
 window.WATERWAL = {
-  // Cloudflare Worker (zie worker/). /risk = overstromingsdata, /subscribe = wachtlijst.
+  // Cloudflare Worker (zie worker/). Wordt alleen nog gebruikt voor /subscribe (wachtlijst).
   WORKER_URL: 'https://waterwal-risk.waterwal.workers.dev',
 
   // ── De zak ──────────────────────────────────────────────────────────────
@@ -14,46 +14,45 @@ window.WATERWAL = {
     freeboardM: 0.10,    // marge boven de verwachte waterstand
     reserve: 0.10,       // 10% extra zakken
     minBags: 6,          // kleinste advies
-    helpLimitCm: 50,     // tot deze waterhoogte zeggen we "zakken kunnen helpen" (bijv. 30 of 50)
-    rainDefaultCm: 20,   // waterhoogte waarmee we rekenen als een scenario te diep is
+    helpLimitCm: 50,     // tot deze waterhoogte zeggen we "zakken kunnen helpen"
+    rainDefaultCm: 20,   // waterhoogte waarmee we rekenen als het water te diep is of zonder adres
     priceEUR: 10,        // prijs per zak
   },
 
-  // ── Overstromingsscenario's ─────────────────────────────────────────────
-  // id's komen overeen met de Worker (k1..k5 = LIWO "Maximale waterdiepte Nederland" kaart 1..5).
-  // Kansklassen volgens Deltares/Rijkswaterstaat (LIWO afgeleide kaarten, nov 2025).
+  // ── Data: alleen de Klimaateffectatlas "waterdiepte bij hevige neerslag" ─────
+  // Gemaakt met tools/hevige-regen/ (zie AI_NOTES.md). Per postcodegebied één .js-bestand,
+  // zodat de site ook werkt als je index.html direct van je schijf opent.
+  ADRES_URL: 'assets/data/adressen/{pc4}.js',
+  AREA_NAME: 'Utrecht en directe omgeving',
+
+  // Twee buien. Per bui: kaartlaag met water op straat en kaartlaag met de panden in FCAB-kleur.
   SCENARIOS: [
-    // Scenario's = overstromingen van verschillende zwaarte (LIWO kaart 1-4), met de officiële
-    // namen. Hoe kleiner de kans, hoe zwaarder de overstroming, dus het water stijgt van k1
-    // naar k4. Kaart 5 (extreem kleine kans) tonen we bewust niet; de Worker levert hem wel.
-    { id: 'k1', name: 'Grote kans',       layer: 'LIWO_Basis:MaximaleWaterdiepteNederland_Kaart1' },
-    { id: 'k2', name: 'Middelgrote kans', layer: 'LIWO_Basis:MaximaleWaterdiepteNederland_Kaart2' },
-    { id: 'k3', name: 'Kleine kans',      layer: 'LIWO_Basis:MaximaleWaterdiepteNederland_Kaart3' },
-    { id: 'k4', name: 'Zeer kleine kans', layer: 'LIWO_Basis:MaximaleWaterdiepteNederland_Kaart4' },
+    { id: 'r70', name: 'Bui van 70 mm', when: 'een bui van 70 mm in een uur', freq: 'gemiddeld eens per 100 jaar',
+      water: 'assets/tiles/regen70-utrecht/{z}/{x}/{y}.png', gebouwen: 'assets/tiles/gebouwen70-utrecht/{z}/{x}/{y}.png',
+      bron: 'FCAB-omgevingsscore van de Klimaateffectatlas' },
+    { id: 'r90', name: 'Bui van 90 mm', when: 'een bui van 90 mm in een uur', freq: 'gemiddeld eens per 250 jaar',
+      water: 'assets/tiles/regen90-utrecht/{z}/{x}/{y}.png', gebouwen: 'assets/tiles/gebouwen90-utrecht/{z}/{x}/{y}.png',
+      bron: 'berekend volgens de FCAB-methode uit de 90 mm-kaart van de Klimaateffectatlas' },
   ],
 
-  // Het oordeel per adres. Komt uit de LIWO-kaart "plaatsgebonden overstromingskans"
-  // (kans per jaar dat het op deze plek nat wordt), klassen 1-5:
-  // 5 groot (>1/30), 4 middelgroot (1/30-1/300), 3 klein (1/300-1/3.000),
-  // 2 zeer klein (1/3.000-1/30.000), 1 extreem klein (<1/30.000).
-  RISK: {
-    hoog:     { label: 'Hoog overstromingsrisico',     text: 'Je adres ligt op een plek waar een overstroming relatief vaak voorkomt.' },
-    gemiddeld:{ label: 'Gemiddeld overstromingsrisico', text: 'Je adres kan overstromen. Dat is niet waarschijnlijk, maar ook niet uitzonderlijk.' },
-    laag:     { label: 'Laag overstromingsrisico',     text: 'Een overstroming op je adres is onwaarschijnlijk, maar niet uitgesloten.' },
-    minimaal: { label: 'Minimaal overstromingsrisico', text: 'Alleen bij een uitzonderlijk zware overstroming komt hier water.' },
-    geen:     { label: 'Geen overstromingsrisico',     text: 'Op de kaarten van Rijkswaterstaat komt hier geen water van rivieren, meren of zee.' },
+  // FCAB-klassen (omgevingsscore wateroverlast): waterdiepte tegen de gevel, kleuren uit de .sld.
+  // red = telt als "rood" op de kaart (vanaf 10 cm).
+  KLASSEN: {
+    1: { name: 'Onbekend',   range: 'geen gegevens',   color: '#b2b2b2', level: 'onbekend' },
+    2: { name: 'Geen',       range: '0 tot 2 cm',      color: '#ffffff', level: 'geen' },
+    3: { name: 'Zeer laag',  range: '2 tot 10 cm',     color: '#ffbebe', level: 'zeerlaag' },
+    4: { name: 'Laag',       range: '10 tot 15 cm',    color: '#ff7f7f', level: 'laag', red: true },
+    5: { name: 'Middel',     range: '15 tot 20 cm',    color: '#ff0000', level: 'middel', red: true },
+    6: { name: 'Hoog',       range: '20 tot 30 cm',    color: '#700000', level: 'hoog', red: true },
+    7: { name: 'Zeer hoog',  range: 'meer dan 30 cm',  color: '#280000', level: 'zeerhoog', red: true },
   },
-  RISK_BY_CLASS: { 5: 'hoog', 4: 'gemiddeld', 3: 'laag', 2: 'minimaal', 1: 'minimaal' },
-  // Reserve als de kanskaart ontbreekt: het eerste scenario waarin het adres nat wordt.
-  RISK_BY_FIRST_WET: { k1: 'hoog', k2: 'gemiddeld', k3: 'laag', k4: 'minimaal', k5: 'minimaal' },
-
-  // Uitleg bij het type gebied (PDOK, Richtlijn Overstromingsrisico's).
-  ZONES: {
-    A: 'Buitendijks: je adres ligt niet achter een dijk langs een grote rivier, een meer of de zee.',
-    B: 'Je adres ligt achter een primaire dijk (grote rivieren, meren of zee).',
-    C: 'Je adres ligt achter een regionale kering, zoals een boezemkade.',
-    D: 'Je adres ligt onbeschermd langs regionaal water, zoals een beek of kanaal.',
-  },
+  // Waterdiepte op straat (kaartlaag), kleuren uit de .sld van de waterdieptekaart.
+  WATER_LEGEND: [
+    { label: '2–10 cm', color: '#b6edf0' }, { label: '10–15 cm', color: '#74b4e8' },
+    { label: '15–20 cm', color: '#1f83e0' }, { label: '20–30 cm', color: '#1d44b8' },
+    { label: 'meer dan 30 cm', color: '#002673' },
+  ],
+  TILES: { minNative: 13, maxNative: 16, bounds: [[51.98265, 4.93942], [52.18179, 5.24656]] },
 
   // Soorten openingen in het zakkenadvies (breedte in cm).
   OPENINGS: [
@@ -64,8 +63,7 @@ window.WATERWAL = {
     { type: 'eigen',       label: 'Eigen maat',  w: 100 },
   ],
 
-  // Kaart
-  LIWO_WMS: 'https://basisinformatie-overstromingen.nl/liwo/geoserver/wms',
+  // Kaart en adres zoeken (PDOK). Deze bepalen niets aan de uitkomst, alleen waar je adres ligt.
   BASEMAP: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/grijs/EPSG:3857/{z}/{x}/{y}.png',
   PDOK_SEARCH: 'https://api.pdok.nl/bzk/locatieserver/search/v3_1',
 };
