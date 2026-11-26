@@ -725,6 +725,28 @@
     $('#wachtlijst').scrollIntoView();
   }
 
+  // Productfoto: wisselt tussen zwart en wit; knoppen kiezen zelf, hover of focus pauzeert.
+  (function () {
+    var box = $('#bagShow');
+    if (!box) return;
+    var imgs = $$('.bags__frame img', box), btns = $$('.bags__switch button', box), cur = 0, timer = null;
+    function show(i) {
+      cur = i;
+      imgs.forEach(function (im, j) { im.classList.toggle('is-on', j === i); });
+      btns.forEach(function (b, j) { b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+    }
+    function start() {
+      if (timer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      timer = setInterval(function () { show((cur + 1) % imgs.length); }, 4000);
+    }
+    function stop() { clearInterval(timer); timer = null; }
+    btns.forEach(function (b, j) { b.addEventListener('click', function () { stop(); show(j); }); });
+    box.addEventListener('mouseenter', stop);
+    box.addEventListener('mouseleave', start);
+    box.addEventListener('focusin', stop);
+    start();
+  })();
+
   // Ontwerppaneel: alleen met ?tune in de adresbalk.
   C.api = {
     simulate: function (depthM) {

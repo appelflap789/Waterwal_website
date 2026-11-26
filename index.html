@@ -73,8 +73,7 @@
 
         <figure class="hero__photo">
           <img src="assets/img/hero-deur.webp" width="1100" height="1366" alt="Zwarte, opgezwollen zakken in verband gestapeld voor een houten voordeur in een bakstenen gevel">
-          <p class="hero__chip"><i aria-hidden="true">!</i>Voorbeeld: Amsterdamsestraatweg 300 · tot 15 cm water</p>
-          <figcaption>Illustratiefoto, gemaakt met AI.</figcaption>
+          <p class="hero__chip"><i aria-hidden="true">!</i>Voorbeeld: Polderweg 12 · tot 15 cm water</p>
         </figure>
       </div>
     </section>
@@ -295,7 +294,6 @@
             </figcaption>
           </figure>
         </div>
-        <p class="fineprint versus__note">Sfeerbeelden, gemaakt met AI.</p>
       </div>
     </section>
 
@@ -328,10 +326,16 @@
     <!-- ───────────── De zakken ───────────── -->
     <section class="section" id="zakken">
       <div class="wrap bags">
-        <figure class="bags__img reveal">
-          <img src="assets/img/zakken-pak.webp" width="1400" height="1045" loading="lazy" alt="Een plat zwart vacuümpak naast een opgezwollen zwarte zak met handvatten en een witte zak zonder handvatten">
-          <figcaption class="fineprint">Productbeeld gemaakt met AI; het echte product kan afwijken.</figcaption>
-        </figure>
+        <div class="bags__show reveal" id="bagShow">
+          <div class="bags__frame">
+            <img class="is-on" src="assets/img/zak-zwart.webp" width="3000" height="2094" loading="lazy" alt="Zwarte Waterwal-zakken met handvatten, plat en vacuüm verpakt">
+            <img src="assets/img/zak-wit.webp" width="3000" height="2001" loading="lazy" alt="Witte Waterwal-zakken zonder handvatten, plat en vacuüm verpakt">
+          </div>
+          <div class="bags__switch" role="group" aria-label="Bekijk een uitvoering">
+            <button type="button" aria-pressed="true"><i class="dot dot--zwart" aria-hidden="true"></i>Zwart, met handvatten</button>
+            <button type="button" aria-pressed="false"><i class="dot dot--wit" aria-hidden="true"></i>Wit, zonder handvatten</button>
+          </div>
+        </div>
         <div class="bags__body">
           <h2>Twee uitvoeringen, één prijs</h2>
           <p class="bags__price"><strong>€ 10</strong> per zak</p>
@@ -448,7 +452,7 @@
         <p><a href="privacy.html">Privacyverklaring</a></p>
         <p><a href="#check">Check je adres</a></p>
       </div>
-      <p class="site-footer__src">Waterdiepte en FCAB-omgevingsscore: Klimaateffectatlas, 2026 (CC BY 4.0). Adressen, gebouwen en kaart: PDOK en Kadaster (BAG). De uitkomst is een indicatie, geen garantie. Foto's op deze pagina zijn gemaakt met AI.</p>
+      <p class="site-footer__src">Waterdiepte en FCAB-omgevingsscore: Klimaateffectatlas, 2026 (CC BY 4.0). Adressen, gebouwen en kaart: PDOK en Kadaster (BAG). De uitkomst is een indicatie, geen garantie.</p>
     </div>
   </footer>
 
